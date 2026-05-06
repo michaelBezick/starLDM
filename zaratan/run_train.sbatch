@@ -3,10 +3,10 @@
 
 set -euo pipefail
 
-REPO_ROOT="${REPO_ROOT:?REPO_ROOT not set; submit via submit_train_selector.sh}"
-CONFIG_PATH="${CONFIG_PATH:-configs/selector_train.yaml}"
-DATA_PATH="${DATA_PATH:-}"
-OUTPUT_DIR="${OUTPUT_DIR:-}"
+REPO_ROOT="${REPO_ROOT:?REPO_ROOT not set; submit via submit_train.sh}"
+CONFIG_PATH="${CONFIG_PATH:-configs/train_fineweb.yaml}"
+FINEWEB_LOCAL_PATH="${FINEWEB_LOCAL_PATH:?FINEWEB_LOCAL_PATH not set; set to path of pre-saved FineWeb dataset}"
+C4_LOCAL_PATH="${C4_LOCAL_PATH:?C4_LOCAL_PATH not set; set to path of pre-saved C4 validation dataset}"
 EXTRA_ARGS="${EXTRA_ARGS:-}"
 CUDA_DEVICE="${CUDA_DEVICE:-0}"
 VENV_PATH="${VENV_PATH:-${REPO_ROOT}/.venv}"
@@ -17,8 +17,8 @@ cd "${REPO_ROOT}"
 echo "hostname: $(hostname)"
 echo "repo_root: ${REPO_ROOT}"
 echo "config_path: ${CONFIG_PATH}"
-echo "data_path: ${DATA_PATH:-from config}"
-echo "output_dir: ${OUTPUT_DIR:-from config}"
+echo "fineweb_local_path: ${FINEWEB_LOCAL_PATH}"
+echo "c4_local_path: ${C4_LOCAL_PATH}"
 echo "extra_args: ${EXTRA_ARGS:-none}"
 echo "venv_path: ${VENV_PATH}"
 echo "cuda_device: ${CUDA_DEVICE}"
@@ -44,19 +44,13 @@ export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 export HF_DATASETS_OFFLINE=1
 export WANDB_MODE=offline
+export FINEWEB_LOCAL_PATH
+export C4_LOCAL_PATH
 
 cmd=(
-    python -m scripts.train_selector
+    accelerate launch scripts/train.py
     --config "${CONFIG_PATH}"
 )
-
-if [[ -n "${DATA_PATH}" ]]; then
-    cmd+=(--data_path "${DATA_PATH}")
-fi
-
-if [[ -n "${OUTPUT_DIR}" ]]; then
-    cmd+=(--output_dir "${OUTPUT_DIR}")
-fi
 
 if [[ -n "${EXTRA_ARGS}" ]]; then
     read -r -a extra_args <<< "${EXTRA_ARGS}"

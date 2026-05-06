@@ -1,3 +1,4 @@
+import os
 import torch
 from transformers import PreTrainedTokenizerBase, AutoTokenizer
 from typing import Any, Dict, List, Optional
@@ -101,10 +102,13 @@ def get_fineweb_streaming_dataset(
     max_length: int = MAX_LENGTH,
     min_chunk_length: int = 64,
     buffer_size: int = 10_000,
+    local_path: str = '',
 ):
     """
-    Stream FineWeb from HuggingFace Hub, tokenize on-the-fly, and chunk into
-    fixed-length sequences.
+    Load FineWeb, tokenize, and chunk into fixed-length sequences.
+
+    If ``local_path`` is provided (or ``FINEWEB_LOCAL_PATH`` env var is set),
+    loads from a pre-saved disk dataset instead of streaming from HuggingFace Hub.
 
     Args:
         tokenizer_name: HuggingFace tokenizer name (e.g. ``'gpt2-large'``).
@@ -112,11 +116,22 @@ def get_fineweb_streaming_dataset(
         max_length: Context length for chunking (tokens per example).
         min_chunk_length: Minimum tokens to keep a partial chunk.
         buffer_size: Shuffle buffer size for the streaming dataset.
+        local_path: Path to a dataset saved with ``save_to_disk()``. Falls back
+            to the ``FINEWEB_LOCAL_PATH`` environment variable if empty.
 
     Returns:
         A HuggingFace ``IterableDataset`` yielding dicts with ``input_ids`` tensors.
     """
+    local_path = local_path or os.getenv('FINEWEB_LOCAL_PATH', '')
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+
+    if local_path:
+        from datasets import load_from_disk
+        dataset = load_from_disk(local_path)
+        dataset = dataset.to_iterable_dataset()
+        dataset = dataset.shuffle(buffer_size=buffer_size)
+        dataset = dataset.with_format('pt')
+        return dataset
 
     dataset = load_dataset(
         'HuggingFaceFW/fineweb',
@@ -156,14 +171,34 @@ def get_c4_validation_dataset(
     tokenizer_name: str = 'gpt2-large',
     max_length: int = MAX_LENGTH,
     num_examples: int = 5000,
+    local_path: str = '',
 ):
     """
     Load a small C4 validation split for periodic evaluation during training.
 
+    If ``local_path`` is provided (or ``C4_LOCAL_PATH`` env var is set),
+    loads from a pre-saved disk dataset instead of streaming from HuggingFace Hub.
+
     Returns:
         A HuggingFace ``IterableDataset`` yielding dicts with ``input_ids`` tensors.
     """
+    local_path = local_path or os.getenv('C4_LOCAL_PATH', '')
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+
+    if local_path:
+        from datasets import load_from_disk
+        dataset = load_from_disk(local_path)
+        dataset = dataset.to_iterable_dataset()
+
+        def tokenize_fn(examples):
+            tokenized = tokenizer(
+                examples['text'], max_length=max_length, truncation=True)
+            tokenized['num_tokens'] = [len(ids) for ids in tokenized['input_ids']]
+            return tokenized
+
+        dataset = dataset.map(tokenize_fn, batched=True)
+        dataset = dataset.with_format('pt')
+        return dataset
 
     dataset = load_dataset(
         'allenai/c4', 'en', split='validation', streaming=True,

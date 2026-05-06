@@ -56,6 +56,13 @@ export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
 export TOKENIZERS_PARALLELISM=false
 export PYTHONUNBUFFERED=1
 
+# --- Offline / no-network settings ---
+export HF_HOME="${HF_HOME:-${REPO_ROOT}/.hf_cache}"
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
+export WANDB_MODE=offline
+
 cmd=(
     python -m scripts.collect_selector_data
     --model_path "${MODEL_PATH}"
