@@ -18,8 +18,21 @@ After this completes, submit jobs with:
       zaratan/submit_train.sh
 """
 
-import argparse
+import sys
 import os
+
+# On HPC clusters (e.g. Zaratan), PYTHONPATH can inject system site-packages
+# before the venv's, causing version mismatches (e.g. old pyarrow lacking json_()).
+# Force the venv's site-packages to the front of the path.
+if sys.prefix != sys.base_prefix:
+    venv_site = os.path.join(
+        sys.prefix, 'lib',
+        f'python{sys.version_info.major}.{sys.version_info.minor}',
+        'site-packages',
+    )
+    sys.path = [venv_site] + [p for p in sys.path if p != venv_site]
+
+import argparse
 
 
 def parse_args():
