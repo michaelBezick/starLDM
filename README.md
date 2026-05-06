@@ -81,6 +81,79 @@ python -m scripts.generate \
     --prompts "The movie was"
 ```
 
+### Selector-guided generation
+
+The selector prototype trains a lightweight supervised model over STAR-LDM's
+loop-internal normalized latent plans. It can steer the diffusion trajectory
+toward plans predicted to decode correctly, optionally sampling multiple
+branches per prompt and applying branch repulsion before selecting the
+highest-scoring plan.
+
+Collect selector data from prompts stored as JSONL rows with `prompt`,
+`prompt_id`, and `gold` fields:
+
+```bash
+python -m scripts.collect_selector_data \
+    --model_path checkpoints/star-ldm \
+    --prompts_path data/selector_prompts.jsonl \
+    --output_path data/selector_dataset.pt \
+    --num_samples_per_prompt 16 \
+    --save_noisy_timesteps
+```
+
+Submit selector data collection on Zaratan:
+
+```bash
+MODEL_PATH=checkpoints/star-ldm \
+PROMPTS_PATH=data/selector_prompts.jsonl \
+OUTPUT_PATH=data/selector_dataset.pt \
+SAVE_NOISY_TIMESTEPS=1 \
+TIME_LIMIT=24:00:00 \
+    zaratan/submit_collect_selector_data.sh
+```
+
+Train the selector:
+
+```bash
+python -m scripts.train_selector \
+    --config configs/selector_train.yaml \
+    --data_path data/selector_dataset.pt \
+    --output_dir checkpoints/selector
+```
+
+Submit selector training on Zaratan:
+
+```bash
+DATA_PATH=data/selector_dataset.pt \
+OUTPUT_DIR=checkpoints/selector \
+TIME_LIMIT=12:00:00 \
+    zaratan/submit_train_selector.sh
+```
+
+Run single-branch selector guidance:
+
+```bash
+python -m scripts.generate \
+    --model_path checkpoints/star-ldm \
+    --selector_path checkpoints/selector \
+    --selector_guidance 1.0 \
+    --prompts "The movie was"
+```
+
+Run K-branch planning with repulsion and best-plan selection:
+
+```bash
+python -m scripts.generate \
+    --model_path checkpoints/star-ldm \
+    --selector_path checkpoints/selector \
+    --selector_guidance 1.0 \
+    --num_plan_branches 8 \
+    --repulsion_scale 0.1 \
+    --select_best_plan \
+    --save_plan_stats plan_stats.jsonl \
+    --prompts "The movie was"
+```
+
 ### Generation options
 
 | Argument | Default | Description |
@@ -91,6 +164,12 @@ python -m scripts.generate \
 | `--classifier_path` | — | Path to classifier checkpoint for guided generation |
 | `--cls_guidance` | 0.0 | Classifier guidance scale (0 = disabled) |
 | `--cls_target` | — | Target class for guidance (0.0 or 1.0) |
+| `--selector_path` | — | Path to selector checkpoint for guided latent planning |
+| `--selector_guidance` | 0.0 | Selector guidance scale (0 = disabled) |
+| `--num_plan_branches` | 1 | Parallel diffusion branches per prompt |
+| `--repulsion_scale` | 0.0 | Branch-repulsion strength |
+| `--select_best_plan` | false | Decode only the highest-scoring branch |
+| `--save_plan_stats` | — | Optional JSONL diagnostics path |
 | `--sampling_timesteps` | 50 | Number of diffusion sampling steps |
 | `--sampler` | ddpm | Diffusion sampler (`ddpm` or `ddim`) |
 | `--cls_free_guidance` | 1.0 | Classifier-free guidance scale |
@@ -122,6 +201,20 @@ PYTHONPATH=. accelerate launch scripts/train.py --config configs/train_fineweb.y
 ```
 
 See [configs/train_fineweb.yaml](configs/train_fineweb.yaml) for the full set of training options. Key defaults match the pretrained checkpoint: GPT-2 Large backbone, WSD learning rate schedule, cosine noise schedule, sigmoid loss weighting, and 250K training steps on FineWeb `sample-10BT`.
+
+## Testing
+
+```bash
+pip install pytest
+pytest tests/test_selector_unit.py -q
+```
+
+Integration tests that load a real STAR-LDM checkpoint are opt-in:
+
+```bash
+STARLDM_TEST_CHECKPOINT=checkpoints/star-ldm \
+pytest --run-integration tests/test_selector_integration.py -q
+```
 
 ## Architecture
 

@@ -8,6 +8,8 @@ from einops.layers.torch import Rearrange, Reduce
 from functools import partial
 from tqdm import tqdm
 from collections import namedtuple
+from dataclasses import dataclass
+from typing import List, Optional
 import math
 import os
 from omegaconf import DictConfig, OmegaConf, open_dict
@@ -25,6 +27,24 @@ from star_ldm.data.CONSTANTS import DATA_STATS_PATH
 
 ModelPrediction =  namedtuple('ModelPrediction', ['pred_eps', 'pred_x', 'pred_v'])
 
+
+@dataclass
+class SampleOutput:
+    x_start: torch.Tensor
+    x_start_internal: torch.Tensor
+    generations: List[str]
+    num_branches: int
+    num_prompts: int
+    selector_scores: Optional[torch.Tensor] = None
+    selected_branch: Optional[torch.Tensor] = None
+    pairwise_cosine: Optional[torch.Tensor] = None
+
+    def __iter__(self):
+        # Compatibility for old call sites that unpacked ``sample`` as
+        # ``x_start, generations = model.sample(...)``.
+        yield self.x_start
+        yield self.generations
+
 def exists(val):
     return val is not None
 
@@ -39,6 +59,58 @@ def zero_init_(m):
     nn.init.zeros_(m.weight)
     if exists(m.bias):
         nn.init.zeros_(m.bias)
+
+
+def time_in_guidance_window(time, start, end):
+    if time is None:
+        return True
+    if torch.is_tensor(time):
+        time_value = float(time.flatten()[0].detach().item())
+    else:
+        time_value = float(time)
+    elapsed_fraction = 1.0 - time_value
+    return start <= elapsed_fraction <= end
+
+
+def selector_redundancy_loss(
+    z_t,
+    num_prompts,
+    num_branches,
+    metric='cosine',
+    quality_weights=None,
+    tau=1.0,
+):
+    if num_branches <= 1:
+        return z_t.new_zeros(())
+
+    z_bkd = z_t.view(num_prompts, num_branches, z_t.shape[-1])
+    upper_mask = torch.triu(
+        torch.ones((num_branches, num_branches), dtype=torch.bool, device=z_t.device),
+        diagonal=1,
+    )
+
+    if metric == 'cosine':
+        z_norm = F.normalize(z_bkd, dim=-1)
+        pairwise = torch.einsum('bkd,bjd->bkj', z_norm, z_norm)
+    elif metric == 'l2':
+        d2 = ((z_bkd.unsqueeze(2) - z_bkd.unsqueeze(1)) ** 2).sum(dim=-1)
+        pairwise = torch.exp(-d2 / tau)
+    else:
+        raise ValueError(f'Unknown repulsion metric {metric!r}')
+
+    if quality_weights is not None:
+        weights = quality_weights.view(num_prompts, num_branches).to(pairwise)
+        pairwise = pairwise * weights.unsqueeze(2) * weights.unsqueeze(1)
+
+    return pairwise[:, upper_mask].sum()
+
+
+def pairwise_branch_cosine(z_t, num_prompts, num_branches):
+    if num_branches <= 1:
+        return None
+    z_bkd = z_t.view(num_prompts, num_branches, z_t.shape[-1])
+    z_norm = F.normalize(z_bkd, dim=-1)
+    return torch.einsum('bkd,bjd->bkj', z_norm, z_norm)
 
 class SoftPromptGenerator(nn.Module):
     def __init__(self,
@@ -226,14 +298,40 @@ class TransfusionGPT(nn.Module):
         return times
 
     @torch.no_grad()
-    @torch.amp.autocast('cuda',enabled=False)
-    def sample(self, input_ids, diffusion_token_mask=None, continuation_start=None, sampler='ddpm', var_lambda=0.2, sampling_timesteps=250, cls_free_guidance=1.0, sigma2=0.05, cosine_scale=3.0, cls_guidance=0.0, classifier=None, cls_target=None, generate_kwargs={}):
-        batch = input_ids.shape[0]
+    @torch.amp.autocast('cuda', enabled=False)
+    def sample(
+        self,
+        input_ids,
+        diffusion_token_mask=None,
+        continuation_start=None,
+        sampler='ddpm',
+        var_lambda=0.2,
+        sampling_timesteps=250,
+        cls_free_guidance=1.0,
+        sigma2=0.05,
+        cosine_scale=3.0,
+        cls_guidance=0.0,
+        classifier=None,
+        cls_target=None,
+        generate_kwargs=None,
+        selector=None,
+        prompt_embeds=None,
+        selector_kwargs=None,
+        num_plan_branches=1,
+        return_internal_latents=False,
+        select_best_plan=False,
+    ):
+        del return_internal_latents
+        original_batch = input_ids.shape[0]
         device = input_ids.device
         assert sampler in {'ddim', 'ddpm'}
         assert var_lambda >= 0 and var_lambda <= 1.0
+        assert num_plan_branches >= 1
 
-        if not generate_kwargs:
+        selector_kwargs = selector_kwargs or {}
+        select_best_plan = selector_kwargs.get('select_best_plan', select_best_plan)
+
+        if generate_kwargs is None or not generate_kwargs:
             generate_kwargs = {
                 "do_sample": True,
                 "num_beams": 1,
@@ -243,25 +341,70 @@ class TransfusionGPT(nn.Module):
                 "repetition_penalty": 1.2
             }
 
+        if num_plan_branches > 1:
+            input_ids = input_ids.repeat_interleave(num_plan_branches, dim=0)
+            if diffusion_token_mask is not None:
+                diffusion_token_mask = diffusion_token_mask.repeat_interleave(num_plan_branches, dim=0)
+            if continuation_start is not None:
+                continuation_start = continuation_start.repeat_interleave(num_plan_branches, dim=0)
+
+        batch = input_ids.shape[0]
+
+        if selector is not None:
+            if prompt_embeds is None:
+                raise ValueError('prompt_embeds must be passed when selector is used')
+            prompt_embeds = prompt_embeds.to(device).float()
+            if prompt_embeds.ndim == 1:
+                prompt_embeds = prompt_embeds.unsqueeze(0)
+            if prompt_embeds.shape[0] == original_batch and num_plan_branches > 1:
+                prompt_embeds = prompt_embeds.repeat_interleave(num_plan_branches, dim=0)
+            if prompt_embeds.shape[0] != batch:
+                raise ValueError(
+                    f'prompt_embeds batch size must be {batch}, got {prompt_embeds.shape[0]}'
+                )
+
         if exists(cosine_scale):
             sample_noise_schedule = get_scaled_noise_schedule('cosine', scale=cosine_scale)
         else:
             sample_noise_schedule = self.sample_noise_schedule
 
-        time_pairs = self.get_sampling_timesteps(batch, sampling_timesteps=sampling_timesteps, device = device)
+        time_pairs = self.get_sampling_timesteps(batch, sampling_timesteps=sampling_timesteps, device=device)
 
         z_t = torch.randn((batch, 768), device=device)
 
         x_start = None
 
-        for time, time_next in tqdm(time_pairs, desc = 'sampling loop time step', total = sampling_timesteps):
-            # get alpha sigma of time and next time
+        for time, time_next in tqdm(time_pairs, desc='sampling loop time step', total=sampling_timesteps):
             alpha2 = sample_noise_schedule(time).unsqueeze(-1)
             alpha2_next = sample_noise_schedule(time_next).unsqueeze(-1)
 
-            model_output = self.diffusion_model_predictions(z_t, alpha2, input_ids, diffusion_token_mask=diffusion_token_mask, cls_free_guidance=cls_free_guidance, cls_guidance=cls_guidance, classifier=classifier, cls_target=cls_target)
+            model_output = self.diffusion_model_predictions(
+                z_t,
+                alpha2,
+                input_ids,
+                diffusion_token_mask=diffusion_token_mask,
+                cls_free_guidance=cls_free_guidance,
+                cls_guidance=cls_guidance,
+                classifier=classifier,
+                cls_target=cls_target,
+                selector=selector,
+                prompt_embeds=prompt_embeds,
+                selector_guidance=selector_kwargs.get('selector_guidance', 0.0),
+                selector_guidance_start=selector_kwargs.get('selector_guidance_start', 0.0),
+                selector_guidance_end=selector_kwargs.get('selector_guidance_end', 1.0),
+                guidance_clip=selector_kwargs.get('guidance_clip', 1.0),
+                normalize_guidance_grad=selector_kwargs.get('normalize_guidance_grad', False),
+                num_prompts=original_batch,
+                num_plan_branches=num_plan_branches,
+                repulsion_scale=selector_kwargs.get('repulsion_scale', 0.0),
+                repulsion_metric=selector_kwargs.get('repulsion_metric', 'cosine'),
+                repulsion_start=selector_kwargs.get('repulsion_start', 0.0),
+                repulsion_end=selector_kwargs.get('repulsion_end', 0.7),
+                quality_weighted_repulsion=selector_kwargs.get('quality_weighted_repulsion', False),
+                repulsion_tau=selector_kwargs.get('repulsion_tau', 1.0),
+                current_time=time,
+            )
 
-            # calculate x0 and noise
             x_start = model_output.pred_x
             eps = model_output.pred_eps
 
@@ -269,36 +412,78 @@ class TransfusionGPT(nn.Module):
                 z_t = x_start
                 continue
 
-            # get noise
             if sampler == 'ddim':
                 z_t = x_start * alpha2_next.sqrt() + eps * (1-alpha2_next).sqrt()
             elif sampler == 'ddpm':
                 noise = torch.randn_like(z_t)
-                alpha2_now = alpha2/alpha2_next
+                alpha2_now = alpha2 / alpha2_next
 
-                min_var = torch.exp(torch.log1p(-alpha2_next) - torch.log1p(-alpha2)) * (1.0 -alpha2_now)
+                min_var = torch.exp(torch.log1p(-alpha2_next) - torch.log1p(-alpha2)) * (1.0 - alpha2_now)
                 max_var = (1.0 - alpha2_now)
-                sigma = torch.exp(var_lambda * torch.log(max_var) + (1 - var_lambda) * torch.log(min_var) )
-                z_t = 1/alpha2_now.sqrt() * (z_t - (1-alpha2_now)/(1-alpha2).sqrt() * eps) + torch.sqrt(sigma) * noise
+                sigma = torch.exp(var_lambda * torch.log(max_var) + (1 - var_lambda) * torch.log(min_var))
+                z_t = 1 / alpha2_now.sqrt() * (
+                    z_t - (1-alpha2_now) / (1-alpha2).sqrt() * eps
+                ) + torch.sqrt(sigma) * noise
 
-        alpha2 = 1-sigma2
-        alpha2 = torch.full((batch, 1), alpha2, device=device)
-        noised_sentence_emb = variance_preserving_map(x_start, alpha2,)
+        x_start_internal_all = x_start.detach().clone()
+        selector_scores = None
+        selected_branch = None
+        pairwise_cosine = None
+        decode_indices = None
+
+        if selector is not None:
+            clean_alpha2 = torch.ones((batch, 1), device=device)
+            selector_scores = selector.get_logits(
+                x_start_internal_all,
+                clean_alpha2,
+                prompt_embeds,
+            ).view(original_batch, num_plan_branches).detach()
+            pairwise_cosine = pairwise_branch_cosine(
+                x_start_internal_all,
+                original_batch,
+                num_plan_branches,
+            )
+            if pairwise_cosine is not None:
+                pairwise_cosine = pairwise_cosine.detach()
+
+            if select_best_plan:
+                selected_branch = selector_scores.argmax(dim=-1)
+                prompt_offsets = torch.arange(original_batch, device=device) * num_plan_branches
+                decode_indices = prompt_offsets + selected_branch
+        elif select_best_plan and num_plan_branches > 1:
+            selected_branch = torch.zeros(original_batch, dtype=torch.long, device=device)
+            decode_indices = torch.arange(original_batch, device=device) * num_plan_branches
+
+        x_start_for_decode = x_start_internal_all
+        input_ids_for_decode = input_ids
+        diffusion_token_mask_for_decode = diffusion_token_mask
+        continuation_start_for_decode = continuation_start
+        if decode_indices is not None:
+            x_start_for_decode = x_start_for_decode.index_select(0, decode_indices)
+            input_ids_for_decode = input_ids_for_decode.index_select(0, decode_indices)
+            if diffusion_token_mask_for_decode is not None:
+                diffusion_token_mask_for_decode = diffusion_token_mask_for_decode.index_select(0, decode_indices)
+            if continuation_start_for_decode is not None:
+                continuation_start_for_decode = continuation_start_for_decode.index_select(0, decode_indices)
+
+        decode_batch = x_start_for_decode.shape[0]
+        alpha2 = torch.full((decode_batch, 1), 1-sigma2, device=device)
+        noised_sentence_emb = variance_preserving_map(x_start_for_decode, alpha2)
         soft_prompt, time_emb = self.soft_prompt_generator(
             noised_sentence_emb, alpha2)
 
-        input_embed = self.lm_embedding(input_ids).float()
-        if diffusion_token_mask is not None:
-            input_embed[diffusion_token_mask] = rearrange(
+        input_embed = self.lm_embedding(input_ids_for_decode).float()
+        if diffusion_token_mask_for_decode is not None:
+            input_embed[diffusion_token_mask_for_decode] = rearrange(
                     soft_prompt, 'b l d -> (b l) d')
         else:
             input_embed = torch.cat((input_embed, soft_prompt), dim=1)
-        # Find last diffusion
+
         gen_id_list = []
         for idx in range(input_embed.shape[0]):
-            if diffusion_token_mask is not None:
-                assert continuation_start is not None
-                last_diffusion_token = continuation_start[idx]+self.num_diffusion_tokens
+            if diffusion_token_mask_for_decode is not None:
+                assert continuation_start_for_decode is not None
+                last_diffusion_token = continuation_start_for_decode[idx] + self.num_diffusion_tokens
                 idx_input_embed = input_embed[idx:idx+1, :last_diffusion_token]
             else:
                 idx_input_embed = input_embed[idx:idx+1]
@@ -306,10 +491,22 @@ class TransfusionGPT(nn.Module):
                 idx_input_embed = idx_input_embed.bfloat16()
             gen_id_list.append(self.gpt2.generate(inputs_embeds=idx_input_embed, **generate_kwargs)[0].tolist())
         generations = self.tokenizer.batch_decode(gen_id_list, skip_special_tokens=True)
+
+        x_start_return = x_start_for_decode
         if self.scale_by_std:
-            x_start = self.unnormalize_sentence_emb(x_start)
-            x_start = F.normalize(x_start, p=2, dim=-1)
-        return x_start, generations
+            x_start_return = self.unnormalize_sentence_emb(x_start_return)
+            x_start_return = F.normalize(x_start_return, p=2, dim=-1)
+
+        return SampleOutput(
+            x_start=x_start_return,
+            x_start_internal=x_start_for_decode.detach().clone(),
+            generations=generations,
+            num_branches=num_plan_branches,
+            num_prompts=original_batch,
+            selector_scores=selector_scores,
+            selected_branch=selected_branch.detach() if selected_branch is not None else None,
+            pairwise_cosine=pairwise_cosine,
+        )
 
     def v_pred(self, noised_sentence_emb, input_ids, alpha2, diffusion_token_mask, labels=None, drop_cond=False):
         n_batch = input_ids.shape[0]
@@ -419,12 +616,20 @@ class TransfusionGPT(nn.Module):
 
     def diffusion_model_predictions(self, z_t, alpha2, input_ids, cls_free_guidance=1.0, diffusion_token_mask=None,
                                     rescale_x=False, cls_guidance=0.0, classifier=None,
-                                    cls_target=None):
+                                    cls_target=None, selector=None, prompt_embeds=None,
+                                    selector_guidance=0.0, selector_guidance_start=0.0,
+                                    selector_guidance_end=1.0, guidance_clip=1.0,
+                                    normalize_guidance_grad=False, num_prompts=None,
+                                    num_plan_branches=1, repulsion_scale=0.0,
+                                    repulsion_metric='cosine', repulsion_start=0.0,
+                                    repulsion_end=0.7, quality_weighted_repulsion=False,
+                                    repulsion_tau=1.0, current_time=None):
         # Create diffusion token mask
         if diffusion_token_mask is None:
             diffusion_token_mask = torch.zeros((input_ids.shape[0], input_ids.shape[1]+self.num_diffusion_tokens), dtype=torch.bool)
             diffusion_token_mask[:, -self.num_diffusion_tokens:] = True
-            input_ids = F.pad(input_ids, (0, 8), value=self.tokenizer.pad_token_id)
+            input_ids = F.pad(input_ids, (0, self.num_diffusion_tokens), value=self.tokenizer.pad_token_id)
+            diffusion_token_mask = diffusion_token_mask.to(input_ids.device)
 
         _, pred_v = self.v_pred(z_t, input_ids, alpha2, diffusion_token_mask, labels=None, drop_cond=False)
 
@@ -444,6 +649,8 @@ class TransfusionGPT(nn.Module):
         else:
             pred_eps = predict_noise_from_v(z_t, pred_v, alpha2)
 
+        guidance_applied = False
+
         if cls_guidance != 0.0:
             assert exists(classifier)
             sigma2 = 1-alpha2
@@ -460,9 +667,61 @@ class TransfusionGPT(nn.Module):
                 grad = torch.autograd.grad(cls_loss, z_t)[0]
             pred_eps = pred_eps + cls_guidance*sigma2.sqrt()*grad
             pred_x = predict_start_from_noise(z_t, pred_eps, alpha2)
-            return ModelPrediction(pred_eps, pred_x, None)
+            guidance_applied = True
 
-        return ModelPrediction(pred_eps, pred_x, pred_v)
+        if (
+            selector is not None
+            and selector_guidance != 0.0
+            and time_in_guidance_window(current_time, selector_guidance_start, selector_guidance_end)
+        ):
+            if prompt_embeds is None:
+                raise ValueError('prompt_embeds must be passed when selector guidance is enabled')
+            if num_prompts is None:
+                num_prompts = z_t.shape[0] // num_plan_branches
+
+            sigma2 = 1-alpha2
+            with torch.enable_grad():
+                guided_z = z_t.detach().requires_grad_(True)
+                sel_loss = selector.get_score_loss(
+                    guided_z,
+                    alpha2,
+                    prompt_embeds,
+                    target=1.0,
+                ).sum()
+
+                red_loss = guided_z.new_zeros(())
+                if (
+                    repulsion_scale != 0.0
+                    and num_plan_branches > 1
+                    and time_in_guidance_window(current_time, repulsion_start, repulsion_end)
+                ):
+                    quality_weights = None
+                    if quality_weighted_repulsion:
+                        quality_weights = torch.sigmoid(
+                            selector.get_logits(guided_z, alpha2, prompt_embeds)
+                        ).detach().squeeze(-1)
+                    red_loss = selector_redundancy_loss(
+                        guided_z,
+                        num_prompts=num_prompts,
+                        num_branches=num_plan_branches,
+                        metric=repulsion_metric,
+                        quality_weights=quality_weights,
+                        tau=repulsion_tau,
+                    )
+
+                total_loss = sel_loss + repulsion_scale * red_loss
+                grad = torch.autograd.grad(total_loss, guided_z)[0]
+
+                if normalize_guidance_grad:
+                    grad = grad / (grad.norm(dim=-1, keepdim=True) + 1e-8)
+                if guidance_clip is not None:
+                    grad = grad.clamp(-guidance_clip, guidance_clip)
+
+            pred_eps = pred_eps + selector_guidance*sigma2.sqrt()*grad
+            pred_x = predict_start_from_noise(z_t, pred_eps, alpha2)
+            guidance_applied = True
+
+        return ModelPrediction(pred_eps, pred_x, None if guidance_applied else pred_v)
 
     @torch.no_grad()
     def get_sentence_embedding(self, sentence):

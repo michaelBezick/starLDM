@@ -1,0 +1,16 @@
+model_path: checkpoints/star-ldm
+selector_path: checkpoints/selector
+prompts:
+  - The movie was
+sampling_timesteps: 50
+sampler: ddpm
+cls_free_guidance: 1.0
+selector_guidance: 1.0
+selector_guidance_start: 0.0
+selector_guidance_end: 1.0
+guidance_clip: 1.0
+normalize_guidance_grad: false
+num_plan_branches: 1
+max_new_tokens: 64
+top_p: 0.9
+repetition_penalty: 1.2
