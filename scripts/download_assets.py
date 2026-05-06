@@ -5,6 +5,7 @@ Run this ONCE on a login node (which has internet access) before submitting jobs
 Usage:
     python scripts/download_assets.py \
         --hf_home /scratch/user/.hf_cache \
+        --gsm8k_path /scratch/user/datasets/gsm8k \
         --fineweb_path /scratch/user/datasets/fineweb-10BT \
         --c4_path /scratch/user/datasets/c4-validation \
         --fineweb_subset sample-10BT \
@@ -13,6 +14,7 @@ Usage:
 
 After this completes, submit jobs with:
     HF_HOME=/scratch/user/.hf_cache \
+    GSM8K_LOCAL_PATH=/scratch/user/datasets/gsm8k \
     FINEWEB_LOCAL_PATH=/scratch/user/datasets/fineweb-10BT \
     C4_LOCAL_PATH=/scratch/user/datasets/c4-validation \
       zaratan/submit_train.sh
@@ -39,10 +41,14 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Download assets for offline use')
     parser.add_argument('--hf_home', required=True,
                         help='Directory to use as HF_HOME (model cache)')
-    parser.add_argument('--fineweb_path', required=True,
+    parser.add_argument('--fineweb_path', default=None,
                         help='Path to save the FineWeb dataset')
-    parser.add_argument('--c4_path', required=True,
+    parser.add_argument('--c4_path', default=None,
                         help='Path to save the C4 validation dataset')
+    parser.add_argument('--gsm8k_path', default=None,
+                        help='Path to save the GSM8K dataset')
+    parser.add_argument('--gsm8k_config', default='main',
+                        help='GSM8K dataset config to download')
     parser.add_argument('--fineweb_subset', default='sample-10BT',
                         choices=['sample-10BT', 'sample-100BT'],
                         help='FineWeb subset to download')
@@ -84,43 +90,58 @@ def main():
     os.makedirs(args.hf_home, exist_ok=True)
 
     # --- Language model + tokenizer ---
-    print(f'\n[1/4] Downloading {args.lm_name} model and tokenizer -> {args.hf_home}')
+    print(f'\n[1] Downloading {args.lm_name} model and tokenizer -> {args.hf_home}')
     download_hf_snapshot(args.lm_name)
     print('      Done.')
 
     # --- Sentence encoder ---
-    print(f'\n[2/4] Downloading sentence encoder {args.sentence_encoder} -> {args.hf_home}')
+    print(f'\n[2] Downloading sentence encoder {args.sentence_encoder} -> {args.hf_home}')
     download_hf_snapshot(args.sentence_encoder)
     print('      Done.')
 
+    if args.gsm8k_path or args.fineweb_path or args.c4_path:
+        from datasets import load_dataset
+
+    # --- GSM8K dataset ---
+    if args.gsm8k_path:
+        print(f'\n[3] Downloading GSM8K ({args.gsm8k_config}) -> {args.gsm8k_path}')
+        gsm8k = load_dataset('openai/gsm8k', args.gsm8k_config)
+        gsm8k.save_to_disk(args.gsm8k_path)
+        print(f'      Saved splits: {", ".join(gsm8k.keys())}.')
+
     # --- FineWeb training dataset ---
-    print(f'\n[3/4] Downloading FineWeb ({args.fineweb_subset}) -> {args.fineweb_path}')
-    print('      This may take a long time and significant disk space.')
-    from datasets import load_dataset
-    fineweb = load_dataset(
-        'HuggingFaceFW/fineweb',
-        name=args.fineweb_subset,
-        split='train',
-        streaming=False,
-    )
-    fineweb.save_to_disk(args.fineweb_path)
-    print(f'      Saved {len(fineweb):,} examples.')
+    if args.fineweb_path:
+        print(f'\n[4] Downloading FineWeb ({args.fineweb_subset}) -> {args.fineweb_path}')
+        print('      This may take a long time and significant disk space.')
+        fineweb = load_dataset(
+            'HuggingFaceFW/fineweb',
+            name=args.fineweb_subset,
+            split='train',
+            streaming=False,
+        )
+        fineweb.save_to_disk(args.fineweb_path)
+        print(f'      Saved {len(fineweb):,} examples.')
 
     # --- C4 validation dataset ---
-    print(f'\n[4/4] Downloading C4 validation ({args.c4_num_examples} examples) -> {args.c4_path}')
-    c4 = load_dataset(
-        'allenai/c4', 'en', split='validation', streaming=True,
-    ).shuffle(seed=42, buffer_size=50_000).take(args.c4_num_examples)
-    # Materialize the iterable dataset before saving
-    from datasets import Dataset
-    c4_materialized = Dataset.from_list(list(c4))
-    c4_materialized.save_to_disk(args.c4_path)
-    print(f'      Saved {len(c4_materialized):,} examples.')
+    if args.c4_path:
+        print(f'\n[5] Downloading C4 validation ({args.c4_num_examples} examples) -> {args.c4_path}')
+        c4 = load_dataset(
+            'allenai/c4', 'en', split='validation', streaming=True,
+        ).shuffle(seed=42, buffer_size=50_000).take(args.c4_num_examples)
+        # Materialize the iterable dataset before saving
+        from datasets import Dataset
+        c4_materialized = Dataset.from_list(list(c4))
+        c4_materialized.save_to_disk(args.c4_path)
+        print(f'      Saved {len(c4_materialized):,} examples.')
 
     print('\nAll assets downloaded. Set the following env vars when submitting jobs:')
     print(f'  HF_HOME={args.hf_home}')
-    print(f'  FINEWEB_LOCAL_PATH={args.fineweb_path}')
-    print(f'  C4_LOCAL_PATH={args.c4_path}')
+    if args.gsm8k_path:
+        print(f'  GSM8K_LOCAL_PATH={args.gsm8k_path}')
+    if args.fineweb_path:
+        print(f'  FINEWEB_LOCAL_PATH={args.fineweb_path}')
+    if args.c4_path:
+        print(f'  C4_LOCAL_PATH={args.c4_path}')
 
 
 if __name__ == '__main__':

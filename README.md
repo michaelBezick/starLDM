@@ -154,6 +154,50 @@ python -m scripts.generate \
     --prompts "The movie was"
 ```
 
+### GSM8K selector training and evaluation
+
+Prepare GSM8K for offline use on a login node:
+
+```bash
+python scripts/download_assets.py \
+    --hf_home .hf_cache \
+    --gsm8k_path datasets/gsm8k \
+    --lm_name gpt2-large \
+    --sentence_encoder sentence-transformers/sentence-t5-xl
+```
+
+Build GSM8K selector prompts, collect verifier-labeled latent plans, and train
+the selector while keeping STAR-LDM frozen:
+
+```bash
+python -m scripts.prepare_gsm8k_prompts \
+    --gsm8k_path datasets/gsm8k \
+    --split train \
+    --output_path data/gsm8k_train_prompts.jsonl
+
+python -m scripts.collect_selector_data \
+    --model_path checkpoints/star-ldm \
+    --prompts_path data/gsm8k_train_prompts.jsonl \
+    --output_path data/gsm8k_selector_train.pt \
+    --verifier gsm8k \
+    --num_samples_per_prompt 16 \
+    --save_noisy_timesteps
+
+python -m scripts.train_selector \
+    --config configs/selector_train_gsm8k.yaml
+```
+
+Evaluate baseline STAR-LDM against selector-guided STAR-LDM on GSM8K test:
+
+```bash
+python -m scripts.evaluate_gsm8k \
+    --model_path checkpoints/star-ldm \
+    --selector_path checkpoints/selector-gsm8k \
+    --gsm8k_path datasets/gsm8k \
+    --split test \
+    --output_path eval/gsm8k_results.jsonl
+```
+
 ### Generation options
 
 | Argument | Default | Description |
