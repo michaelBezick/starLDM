@@ -56,23 +56,41 @@ def parse_args():
     return parser.parse_args()
 
 
+def configure_hpc_defaults():
+    """Keep import-time native libraries from oversubscribing login nodes."""
+    thread_env_defaults = {
+        'OMP_NUM_THREADS': '1',
+        'OPENBLAS_NUM_THREADS': '1',
+        'MKL_NUM_THREADS': '1',
+        'VECLIB_MAXIMUM_THREADS': '1',
+        'NUMEXPR_NUM_THREADS': '1',
+        'TOKENIZERS_PARALLELISM': 'false',
+    }
+    for name, value in thread_env_defaults.items():
+        os.environ.setdefault(name, value)
+
+
+def download_hf_snapshot(repo_id):
+    from huggingface_hub import snapshot_download
+
+    snapshot_download(repo_id=repo_id)
+
+
 def main():
     args = parse_args()
 
+    configure_hpc_defaults()
     os.environ['HF_HOME'] = args.hf_home
     os.makedirs(args.hf_home, exist_ok=True)
 
     # --- Language model + tokenizer ---
     print(f'\n[1/4] Downloading {args.lm_name} model and tokenizer -> {args.hf_home}')
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-    AutoTokenizer.from_pretrained(args.lm_name)
-    AutoModelForCausalLM.from_pretrained(args.lm_name)
+    download_hf_snapshot(args.lm_name)
     print('      Done.')
 
     # --- Sentence encoder ---
     print(f'\n[2/4] Downloading sentence encoder {args.sentence_encoder} -> {args.hf_home}')
-    from sentence_transformers import SentenceTransformer
-    SentenceTransformer(args.sentence_encoder)
+    download_hf_snapshot(args.sentence_encoder)
     print('      Done.')
 
     # --- FineWeb training dataset ---
