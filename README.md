@@ -166,21 +166,51 @@ python scripts/download_assets.py \
     --sentence_encoder sentence-transformers/sentence-t5-xl
 ```
 
-Build GSM8K selector prompts, collect verifier-labeled latent plans, and train
-the selector while keeping STAR-LDM frozen:
+Before submitting selector jobs to Zaratan, build the GSM8K prompt JSONL on a
+login node. The selector collection job reads this JSONL file; it does not read
+the GSM8K dataset directly.
 
 ```bash
 python -m scripts.prepare_gsm8k_prompts \
     --gsm8k_path datasets/gsm8k \
     --split train \
     --output_path data/gsm8k_train_prompts.jsonl
+```
 
+Submit selector data collection to Zaratan. Use the GSM8K verifier and a longer
+generation budget than the default selector example:
+
+```bash
+MODEL_PATH=checkpoints/star-ldm \
+PROMPTS_PATH=data/gsm8k_train_prompts.jsonl \
+OUTPUT_PATH=data/gsm8k_selector_train.pt \
+VERIFIER=gsm8k \
+SAVE_NOISY_TIMESTEPS=1 \
+MAX_NEW_TOKENS=256 \
+TIME_LIMIT=24:00:00 \
+    zaratan/submit_collect_selector_data.sh
+```
+
+After the collection job finishes successfully, train the selector:
+
+```bash
+CONFIG_PATH=configs/selector_train_gsm8k.yaml \
+DATA_PATH=data/gsm8k_selector_train.pt \
+OUTPUT_DIR=checkpoints/selector-gsm8k \
+TIME_LIMIT=12:00:00 \
+    zaratan/submit_train_selector.sh
+```
+
+The same steps can also be run directly without SLURM:
+
+```bash
 python -m scripts.collect_selector_data \
     --model_path checkpoints/star-ldm \
     --prompts_path data/gsm8k_train_prompts.jsonl \
     --output_path data/gsm8k_selector_train.pt \
     --verifier gsm8k \
     --num_samples_per_prompt 16 \
+    --max_new_tokens 256 \
     --save_noisy_timesteps
 
 python -m scripts.train_selector \
@@ -197,6 +227,11 @@ python -m scripts.evaluate_gsm8k \
     --split test \
     --output_path eval/gsm8k_results.jsonl
 ```
+
+If assets were downloaded outside the repo, pass the cache path to Zaratan jobs,
+for example `HF_HOME=/scratch/$USER/starLDM/.hf_cache`. The existing Zaratan
+wrappers are configured for selector collection and training, but evaluation
+currently runs directly with `scripts.evaluate_gsm8k`.
 
 ### Generation options
 
