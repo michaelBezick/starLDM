@@ -41,14 +41,14 @@ a login node before submitting SLURM jobs:
 ```bash
 module load python/3.10.10/gcc/11.3.0/cuda/12.3.0/linux-rhel8-zen2
 
-python -m venv /scratch/$USER/starLDM/.venv
-source /scratch/$USER/starLDM/.venv/bin/activate
+python -m venv /home/mbezick/scratch/starLDM/.venv
+source /home/mbezick/scratch/starLDM/.venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt 'accelerate>=1.0' wandb 'datasets>=2.14'
 
 python scripts/download_assets.py \
-    --hf_home /scratch/$USER/starLDM/.hf_cache \
-    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
+    --hf_home /home/mbezick/scratch/starLDM/.hf_cache \
+    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
     --lm_name gpt2-large \
     --sentence_encoder sentence-transformers/sentence-t5-xl
 ```
@@ -129,12 +129,12 @@ python -m scripts.collect_selector_data \
 Submit selector data collection on Zaratan:
 
 ```bash
-VENV_PATH=/scratch/$USER/starLDM/.venv \
-HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
+HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
 PARTITION=gpu \
-MODEL_PATH=/scratch/$USER/starLDM/checkpoints/star-ldm \
-PROMPTS_PATH=/scratch/$USER/starLDM/data/selector_prompts.jsonl \
-OUTPUT_PATH=/scratch/$USER/starLDM/data/selector_dataset.pt \
+MODEL_PATH=/home/mbezick/scratch/starLDM/checkpoints/star-ldm \
+PROMPTS_PATH=/home/mbezick/scratch/starLDM/data/selector_prompts.jsonl \
+OUTPUT_PATH=/home/mbezick/scratch/starLDM/data/selector_dataset.pt \
 SAVE_NOISY_TIMESTEPS=1 \
 TIME_LIMIT=24:00:00 \
     zaratan/submit_collect_selector_data.sh
@@ -152,11 +152,11 @@ python -m scripts.train_selector \
 Submit selector training on Zaratan:
 
 ```bash
-VENV_PATH=/scratch/$USER/starLDM/.venv \
-HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
+HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
 PARTITION=gpu \
-DATA_PATH=/scratch/$USER/starLDM/data/selector_dataset.pt \
-OUTPUT_DIR=/scratch/$USER/starLDM/checkpoints/selector \
+DATA_PATH=/home/mbezick/scratch/starLDM/data/selector_dataset.pt \
+OUTPUT_DIR=/home/mbezick/scratch/starLDM/checkpoints/selector \
 TIME_LIMIT=12:00:00 \
     zaratan/submit_train_selector.sh
 ```
@@ -191,8 +191,8 @@ Prepare GSM8K for offline use on a login node:
 
 ```bash
 python scripts/download_assets.py \
-    --hf_home /scratch/$USER/starLDM/.hf_cache \
-    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
+    --hf_home /home/mbezick/scratch/starLDM/.hf_cache \
+    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
     --lm_name gpt2-large \
     --sentence_encoder sentence-transformers/sentence-t5-xl
 ```
@@ -203,21 +203,21 @@ the GSM8K dataset directly.
 
 ```bash
 python -m scripts.prepare_gsm8k_prompts \
-    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
+    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
     --split train \
-    --output_path /scratch/$USER/starLDM/data/gsm8k_train_prompts.jsonl
+    --output_path /home/mbezick/scratch/starLDM/data/gsm8k_train_prompts.jsonl
 ```
 
 Submit selector data collection to Zaratan. Use the GSM8K verifier and a longer
 generation budget than the default selector example:
 
 ```bash
-VENV_PATH=/scratch/$USER/starLDM/.venv \
-HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
+HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
 PARTITION=gpu \
-MODEL_PATH=/scratch/$USER/starLDM/checkpoints/star-ldm \
-PROMPTS_PATH=/scratch/$USER/starLDM/data/gsm8k_train_prompts.jsonl \
-OUTPUT_PATH=/scratch/$USER/starLDM/data/gsm8k_selector_train.pt \
+MODEL_PATH=/home/mbezick/scratch/starLDM/checkpoints/star-ldm \
+PROMPTS_PATH=/home/mbezick/scratch/starLDM/data/gsm8k_train_prompts.jsonl \
+OUTPUT_PATH=/home/mbezick/scratch/starLDM/data/gsm8k_selector_train.pt \
 VERIFIER=gsm8k \
 SAVE_NOISY_TIMESTEPS=1 \
 MAX_NEW_TOKENS=256 \
@@ -228,12 +228,12 @@ TIME_LIMIT=24:00:00 \
 After the collection job finishes successfully, train the selector:
 
 ```bash
-VENV_PATH=/scratch/$USER/starLDM/.venv \
-HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
+HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
 PARTITION=gpu \
 CONFIG_PATH=configs/selector_train_gsm8k.yaml \
-DATA_PATH=/scratch/$USER/starLDM/data/gsm8k_selector_train.pt \
-OUTPUT_DIR=/scratch/$USER/starLDM/checkpoints/selector-gsm8k \
+DATA_PATH=/home/mbezick/scratch/starLDM/data/gsm8k_selector_train.pt \
+OUTPUT_DIR=/home/mbezick/scratch/starLDM/checkpoints/selector-gsm8k \
 TIME_LIMIT=12:00:00 \
     zaratan/submit_train_selector.sh
 ```
@@ -258,9 +258,9 @@ Evaluate baseline STAR-LDM against selector-guided STAR-LDM on GSM8K test:
 
 ```bash
 python -m scripts.evaluate_gsm8k \
-    --model_path /scratch/$USER/starLDM/checkpoints/star-ldm \
-    --selector_path /scratch/$USER/starLDM/checkpoints/selector-gsm8k \
-    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
+    --model_path /home/mbezick/scratch/starLDM/checkpoints/star-ldm \
+    --selector_path /home/mbezick/scratch/starLDM/checkpoints/selector-gsm8k \
+    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
     --split test \
     --output_path eval/gsm8k_results.jsonl
 ```
@@ -320,9 +320,9 @@ Download the training and validation datasets on a login node:
 
 ```bash
 python scripts/download_assets.py \
-    --hf_home /scratch/$USER/starLDM/.hf_cache \
-    --fineweb_path /scratch/$USER/starLDM/datasets/fineweb-10BT \
-    --c4_path /scratch/$USER/starLDM/datasets/c4-validation \
+    --hf_home /home/mbezick/scratch/starLDM/.hf_cache \
+    --fineweb_path /home/mbezick/scratch/starLDM/datasets/fineweb-10BT \
+    --c4_path /home/mbezick/scratch/starLDM/datasets/c4-validation \
     --fineweb_subset sample-10BT \
     --lm_name gpt2-large \
     --sentence_encoder sentence-transformers/sentence-t5-xl
@@ -331,11 +331,11 @@ python scripts/download_assets.py \
 Submit the offline training job:
 
 ```bash
-VENV_PATH=/scratch/$USER/starLDM/.venv \
-HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
+HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
 PARTITION=gpu \
-FINEWEB_LOCAL_PATH=/scratch/$USER/starLDM/datasets/fineweb-10BT \
-C4_LOCAL_PATH=/scratch/$USER/starLDM/datasets/c4-validation \
+FINEWEB_LOCAL_PATH=/home/mbezick/scratch/starLDM/datasets/fineweb-10BT \
+C4_LOCAL_PATH=/home/mbezick/scratch/starLDM/datasets/c4-validation \
 TIME_LIMIT=24:00:00 \
     zaratan/submit_train.sh
 ```
