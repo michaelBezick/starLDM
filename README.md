@@ -29,8 +29,33 @@ The Stop-Think-AutoRegress Language Diffusion Model (STAR-LDM) integrates latent
 pip install -r requirements.txt
 
 # Additional dependencies for training
-pip install accelerate>=1.0 wandb datasets>=2.14
+pip install 'accelerate>=1.0' wandb 'datasets>=2.14'
 ```
+
+### Zaratan setup
+
+Zaratan jobs run offline on compute nodes and the wrappers expect a Python
+virtual environment. Create the environment and download model/dataset assets on
+a login node before submitting SLURM jobs:
+
+```bash
+module load python/3.10.10/gcc/11.3.0/cuda/12.3.0/linux-rhel8-zen2
+
+python -m venv /scratch/$USER/starLDM/.venv
+source /scratch/$USER/starLDM/.venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt 'accelerate>=1.0' wandb 'datasets>=2.14'
+
+python scripts/download_assets.py \
+    --hf_home /scratch/$USER/starLDM/.hf_cache \
+    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
+    --lm_name gpt2-large \
+    --sentence_encoder sentence-transformers/sentence-t5-xl
+```
+
+The submit wrappers default to `GPU_TYPE=a100` and request
+`--gres=gpu:a100:1`. Add `ACCOUNT=...` or `QOS=...` if your allocation requires
+them; use `GPU_TYPE=h100` for H100 jobs.
 
 ### Pretrained Checkpoints
 
@@ -104,9 +129,12 @@ python -m scripts.collect_selector_data \
 Submit selector data collection on Zaratan:
 
 ```bash
-MODEL_PATH=checkpoints/star-ldm \
-PROMPTS_PATH=data/selector_prompts.jsonl \
-OUTPUT_PATH=data/selector_dataset.pt \
+VENV_PATH=/scratch/$USER/starLDM/.venv \
+HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+PARTITION=gpu \
+MODEL_PATH=/scratch/$USER/starLDM/checkpoints/star-ldm \
+PROMPTS_PATH=/scratch/$USER/starLDM/data/selector_prompts.jsonl \
+OUTPUT_PATH=/scratch/$USER/starLDM/data/selector_dataset.pt \
 SAVE_NOISY_TIMESTEPS=1 \
 TIME_LIMIT=24:00:00 \
     zaratan/submit_collect_selector_data.sh
@@ -124,8 +152,11 @@ python -m scripts.train_selector \
 Submit selector training on Zaratan:
 
 ```bash
-DATA_PATH=data/selector_dataset.pt \
-OUTPUT_DIR=checkpoints/selector \
+VENV_PATH=/scratch/$USER/starLDM/.venv \
+HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+PARTITION=gpu \
+DATA_PATH=/scratch/$USER/starLDM/data/selector_dataset.pt \
+OUTPUT_DIR=/scratch/$USER/starLDM/checkpoints/selector \
 TIME_LIMIT=12:00:00 \
     zaratan/submit_train_selector.sh
 ```
@@ -160,8 +191,8 @@ Prepare GSM8K for offline use on a login node:
 
 ```bash
 python scripts/download_assets.py \
-    --hf_home .hf_cache \
-    --gsm8k_path datasets/gsm8k \
+    --hf_home /scratch/$USER/starLDM/.hf_cache \
+    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
     --lm_name gpt2-large \
     --sentence_encoder sentence-transformers/sentence-t5-xl
 ```
@@ -172,18 +203,21 @@ the GSM8K dataset directly.
 
 ```bash
 python -m scripts.prepare_gsm8k_prompts \
-    --gsm8k_path datasets/gsm8k \
+    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
     --split train \
-    --output_path data/gsm8k_train_prompts.jsonl
+    --output_path /scratch/$USER/starLDM/data/gsm8k_train_prompts.jsonl
 ```
 
 Submit selector data collection to Zaratan. Use the GSM8K verifier and a longer
 generation budget than the default selector example:
 
 ```bash
-MODEL_PATH=checkpoints/star-ldm \
-PROMPTS_PATH=data/gsm8k_train_prompts.jsonl \
-OUTPUT_PATH=data/gsm8k_selector_train.pt \
+VENV_PATH=/scratch/$USER/starLDM/.venv \
+HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+PARTITION=gpu \
+MODEL_PATH=/scratch/$USER/starLDM/checkpoints/star-ldm \
+PROMPTS_PATH=/scratch/$USER/starLDM/data/gsm8k_train_prompts.jsonl \
+OUTPUT_PATH=/scratch/$USER/starLDM/data/gsm8k_selector_train.pt \
 VERIFIER=gsm8k \
 SAVE_NOISY_TIMESTEPS=1 \
 MAX_NEW_TOKENS=256 \
@@ -194,9 +228,12 @@ TIME_LIMIT=24:00:00 \
 After the collection job finishes successfully, train the selector:
 
 ```bash
+VENV_PATH=/scratch/$USER/starLDM/.venv \
+HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+PARTITION=gpu \
 CONFIG_PATH=configs/selector_train_gsm8k.yaml \
-DATA_PATH=data/gsm8k_selector_train.pt \
-OUTPUT_DIR=checkpoints/selector-gsm8k \
+DATA_PATH=/scratch/$USER/starLDM/data/gsm8k_selector_train.pt \
+OUTPUT_DIR=/scratch/$USER/starLDM/checkpoints/selector-gsm8k \
 TIME_LIMIT=12:00:00 \
     zaratan/submit_train_selector.sh
 ```
@@ -221,17 +258,15 @@ Evaluate baseline STAR-LDM against selector-guided STAR-LDM on GSM8K test:
 
 ```bash
 python -m scripts.evaluate_gsm8k \
-    --model_path checkpoints/star-ldm \
-    --selector_path checkpoints/selector-gsm8k \
-    --gsm8k_path datasets/gsm8k \
+    --model_path /scratch/$USER/starLDM/checkpoints/star-ldm \
+    --selector_path /scratch/$USER/starLDM/checkpoints/selector-gsm8k \
+    --gsm8k_path /scratch/$USER/starLDM/datasets/gsm8k \
     --split test \
     --output_path eval/gsm8k_results.jsonl
 ```
 
-If assets were downloaded outside the repo, pass the cache path to Zaratan jobs,
-for example `HF_HOME=/scratch/$USER/starLDM/.hf_cache`. The existing Zaratan
-wrappers are configured for selector collection and training, but evaluation
-currently runs directly with `scripts.evaluate_gsm8k`.
+The existing Zaratan wrappers are configured for selector collection and
+training, but evaluation currently runs directly with `scripts.evaluate_gsm8k`.
 
 ### Generation options
 
@@ -277,6 +312,32 @@ PYTHONPATH=. accelerate launch scripts/train.py --config configs/train_fineweb.y
 ```bash
 PYTHONPATH=. accelerate launch scripts/train.py --config configs/train_fineweb.yaml \
     train.learning_rate=1e-4 train.train_batch_size=8
+```
+
+### Zaratan training
+
+Download the training and validation datasets on a login node:
+
+```bash
+python scripts/download_assets.py \
+    --hf_home /scratch/$USER/starLDM/.hf_cache \
+    --fineweb_path /scratch/$USER/starLDM/datasets/fineweb-10BT \
+    --c4_path /scratch/$USER/starLDM/datasets/c4-validation \
+    --fineweb_subset sample-10BT \
+    --lm_name gpt2-large \
+    --sentence_encoder sentence-transformers/sentence-t5-xl
+```
+
+Submit the offline training job:
+
+```bash
+VENV_PATH=/scratch/$USER/starLDM/.venv \
+HF_HOME=/scratch/$USER/starLDM/.hf_cache \
+PARTITION=gpu \
+FINEWEB_LOCAL_PATH=/scratch/$USER/starLDM/datasets/fineweb-10BT \
+C4_LOCAL_PATH=/scratch/$USER/starLDM/datasets/c4-validation \
+TIME_LIMIT=24:00:00 \
+    zaratan/submit_train.sh
 ```
 
 See [configs/train_fineweb.yaml](configs/train_fineweb.yaml) for the full set of training options. Key defaults match the pretrained checkpoint: GPT-2 Large backbone, WSD learning rate schedule, cosine noise schedule, sigmoid loss weighting, and 250K training steps on FineWeb `sample-10BT`.
