@@ -19,10 +19,12 @@ def _to_decimal(value: str) -> Optional[Decimal]:
 
 
 def _format_decimal(value: Decimal) -> str:
-    normalized = value.normalize()
-    if normalized == normalized.to_integral():
-        return str(normalized.quantize(Decimal(1)))
-    return format(normalized, 'f').rstrip('0').rstrip('.')
+    formatted = format(value, 'f')
+    if '.' in formatted:
+        formatted = formatted.rstrip('0').rstrip('.')
+    if formatted in ('-0', '+0'):
+        return '0'
+    return formatted
 
 
 def extract_gsm8k_answer(text: Optional[str]) -> Optional[str]:
