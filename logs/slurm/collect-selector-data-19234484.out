@@ -1,0 +1,26 @@
+hostname: gpu-b9-1.zaratan.umd.edu
+repo_root: /home/mbezick/scratch/starLDM
+model_path: checkpoints/star-ldm
+prompts_path: /home/mbezick/scratch/starLDM/data/gsm8k_train_prompts_10k.jsonl
+output_path: /home/mbezick/scratch/starLDM/data/gsm8k_selector_train_10k.pt
+num_samples_per_prompt: 8
+verifier: gsm8k
+save_noisy_timesteps: 0
+noisy_per_clean: 4
+sampling_timesteps: 25
+sampler: ddim
+cosine_scale: 3.0
+max_new_tokens: 128
+seed: 0
+extra_args: none
+venv_path: /home/mbezick/scratch/starLDM/.venv
+cuda_device: 0
+slurm_job_id: 19234484
+slurm_time_limit: unknown minutes
+started_at: 2026-05-07T22:03:40-04:00
+Running: python -m scripts.collect_selector_data --model_path checkpoints/star-ldm --prompts_path /home/mbezick/scratch/starLDM/data/gsm8k_train_prompts_10k.jsonl --output_path /home/mbezick/scratch/starLDM/data/gsm8k_selector_train_10k.pt --num_samples_per_prompt 8 --verifier gsm8k --noisy_per_clean 4 --sampling_timesteps 25 --sampler ddim --cosine_scale 3.0 --max_new_tokens 128 --device cuda --seed 0
+command_started_at: 2026-05-07T22:03:40-04:00
+srun: error: CPU binding outside of job step allocation, allocated CPUs are: 0x00FF0000000000000000000000000000.
+srun: error: Task launch for StepId=19234484.0 failed on node gpu-b9-1: Unable to satisfy cpu bind request
+srun: error: Application launch failed: Unable to satisfy cpu bind request
+srun: Job step aborted

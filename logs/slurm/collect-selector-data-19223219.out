@@ -1,0 +1,1019 @@
+hostname: gpu-b11-4.zaratan.umd.edu
+repo_root: /home/mbezick/scratch/starLDM
+model_path: checkpoints/star-ldm
+prompts_path: data/gsm8k_train_prompts.jsonl
+output_path: data/gsm8k_selector_train.pt
+num_samples_per_prompt: 16
+verifier: gsm8k
+save_noisy_timesteps: 1
+noisy_per_clean: 4
+sampling_timesteps: 50
+sampler: ddpm
+cosine_scale: 3.0
+max_new_tokens: 256
+seed: 0
+extra_args: none
+venv_path: /home/mbezick/scratch/starLDM/.venv
+cuda_device: 0
+slurm_job_id: 19223219
+slurm_time_limit: unknown minutes
+started_at: 2026-05-06T19:18:43-04:00
+Running: python -m scripts.collect_selector_data --model_path checkpoints/star-ldm --prompts_path data/gsm8k_train_prompts.jsonl --output_path data/gsm8k_selector_train.pt --num_samples_per_prompt 16 --verifier gsm8k --noisy_per_clean 4 --sampling_timesteps 50 --sampler ddpm --cosine_scale 3.0 --max_new_tokens 256 --device cuda --seed 0 --save_noisy_timesteps
+command_started_at: 2026-05-06T19:18:43-04:00
+[INFO] Running in WANDB offline mode
+Loading weights:   0%|          | 0/436 [00:00<?, ?it/s]Loading weights:   5%|▍         | 20/436 [00:00<00:05, 81.80it/s]Loading weights:   7%|▋         | 31/436 [00:00<00:10, 37.70it/s]Loading weights:   8%|▊         | 36/436 [00:00<00:10, 37.85it/s]Loading weights:   9%|▉         | 41/436 [00:01<00:10, 37.48it/s]Loading weights:  11%|█         | 48/436 [00:01<00:08, 43.54it/s]Loading weights:  13%|█▎        | 55/436 [00:01<00:10, 37.41it/s]Loading weights:  14%|█▍        | 60/436 [00:01<00:13, 27.97it/s]Loading weights:  15%|█▌        | 67/436 [00:01<00:12, 29.27it/s]Loading weights:  16%|█▋        | 71/436 [00:02<00:12, 30.37it/s]Loading weights:  18%|█▊        | 80/436 [00:02<00:08, 39.70it/s]Loading weights:  19%|█▉        | 85/436 [00:02<00:08, 41.33it/s]Loading weights:  21%|██▏       | 93/436 [00:02<00:07, 47.04it/s]Loading weights:  23%|██▎       | 99/436 [00:02<00:09, 34.26it/s]Loading weights:  27%|██▋       | 116/436 [00:02<00:06, 49.55it/s]Loading weights:  28%|██▊       | 123/436 [00:03<00:06, 49.80it/s]Loading weights:  33%|███▎      | 142/436 [00:03<00:04, 65.73it/s]Loading weights:  35%|███▌      | 153/436 [00:03<00:04, 70.52it/s]Loading weights:  37%|███▋      | 162/436 [00:03<00:03, 71.02it/s]Loading weights:  39%|███▉      | 170/436 [00:03<00:05, 51.87it/s]Loading weights:  40%|████      | 176/436 [00:04<00:06, 40.11it/s]Loading weights:  42%|████▏     | 181/436 [00:04<00:06, 41.44it/s]Loading weights:  43%|████▎     | 189/436 [00:04<00:07, 32.29it/s]Loading weights:  44%|████▍     | 194/436 [00:04<00:07, 34.48it/s]Loading weights:  46%|████▌     | 199/436 [00:04<00:07, 30.41it/s]Loading weights:  48%|████▊     | 209/436 [00:04<00:05, 39.51it/s]Loading weights:  49%|████▉     | 215/436 [00:05<00:05, 38.31it/s]Loading weights:  52%|█████▏    | 225/436 [00:05<00:04, 48.81it/s]Loading weights:  53%|█████▎    | 231/436 [00:05<00:04, 44.24it/s]Loading weights:  55%|█████▍    | 238/436 [00:05<00:04, 45.06it/s]Loading weights:  57%|█████▋    | 250/436 [00:05<00:03, 59.87it/s]Loading weights:  59%|█████▉    | 259/436 [00:05<00:03, 53.63it/s]Loading weights:  61%|██████    | 266/436 [00:06<00:03, 45.57it/s]Loading weights:  62%|██████▏   | 272/436 [00:06<00:04, 33.43it/s]Loading weights:  64%|██████▎   | 277/436 [00:06<00:04, 33.47it/s]Loading weights:  64%|██████▍   | 281/436 [00:06<00:04, 31.89it/s]Loading weights:  65%|██████▌   | 285/436 [00:06<00:04, 30.80it/s]Loading weights:  66%|██████▋   | 289/436 [00:07<00:04, 30.87it/s]Loading weights:  68%|██████▊   | 296/436 [00:07<00:03, 36.68it/s]Loading weights:  71%|███████▏  | 311/436 [00:07<00:02, 55.77it/s]Loading weights:  74%|███████▎  | 321/436 [00:07<00:02, 55.28it/s]Loading weights:  78%|███████▊  | 342/436 [00:07<00:01, 85.52it/s]Loading weights:  81%|████████  | 352/436 [00:07<00:01, 57.59it/s]Loading weights:  83%|████████▎ | 360/436 [00:08<00:01, 48.61it/s]Loading weights:  84%|████████▍ | 367/436 [00:08<00:01, 51.00it/s]Loading weights:  86%|████████▌ | 374/436 [00:08<00:01, 37.90it/s]Loading weights:  87%|████████▋ | 381/436 [00:08<00:01, 42.08it/s]Loading weights:  89%|████████▉ | 390/436 [00:08<00:01, 41.52it/s]Loading weights:  93%|█████████▎| 405/436 [00:09<00:00, 52.04it/s]Loading weights:  95%|█████████▍| 413/436 [00:09<00:00, 55.56it/s]Loading weights:  98%|█████████▊| 427/436 [00:09<00:00, 57.72it/s]Loading weights: 100%|█████████▉| 434/436 [00:09<00:00, 58.53it/s]Loading weights: 100%|██████████| 436/436 [00:09<00:00, 45.37it/s]
+Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights:   4%|▍         | 8/195 [00:00<00:16, 11.13it/s]Loading weights:   8%|▊         | 16/195 [00:01<00:12, 13.83it/s]Loading weights:  12%|█▏        | 23/195 [00:01<00:08, 20.41it/s]Loading weights:  15%|█▍        | 29/195 [00:01<00:09, 17.21it/s]Loading weights:  21%|██        | 40/195 [00:02<00:07, 22.02it/s]Loading weights:  24%|██▍       | 47/195 [00:02<00:06, 22.58it/s]Loading weights:  26%|██▌       | 50/195 [00:03<00:12, 11.62it/s]Loading weights:  27%|██▋       | 52/195 [00:03<00:13, 10.53it/s]Loading weights:  29%|██▊       | 56/195 [00:04<00:19,  7.15it/s]Loading weights:  33%|███▎      | 64/195 [00:05<00:14,  9.02it/s]Loading weights:  41%|████      | 80/195 [00:07<00:14,  7.88it/s]Loading weights:  45%|████▌     | 88/195 [00:07<00:10,  9.82it/s]Loading weights:  53%|█████▎    | 104/195 [00:08<00:06, 15.08it/s]Loading weights:  57%|█████▋    | 112/195 [00:08<00:05, 15.97it/s]Loading weights:  59%|█████▉    | 115/195 [00:08<00:04, 16.08it/s]Loading weights:  66%|██████▌   | 128/195 [00:08<00:02, 23.90it/s]Loading weights:  70%|██████▉   | 136/195 [00:09<00:03, 15.75it/s]Loading weights:  72%|███████▏  | 141/195 [00:10<00:03, 16.70it/s]Loading weights:  74%|███████▍  | 144/195 [00:10<00:03, 13.35it/s]Loading weights:  75%|███████▌  | 147/195 [00:11<00:04, 10.46it/s]Loading weights:  76%|███████▋  | 149/195 [00:11<00:05,  8.20it/s]Loading weights:  77%|███████▋  | 151/195 [00:11<00:04,  8.93it/s]Loading weights:  82%|████████▏ | 159/195 [00:12<00:02, 15.55it/s]Loading weights:  84%|████████▎ | 163/195 [00:12<00:02, 12.68it/s]Loading weights:  86%|████████▌ | 168/195 [00:12<00:02, 12.70it/s]Loading weights:  90%|█████████ | 176/195 [00:13<00:01, 17.47it/s]Loading weights:  94%|█████████▍| 184/195 [00:13<00:00, 21.71it/s]Loading weights: 100%|██████████| 195/195 [00:13<00:00, 14.49it/s]
+Collecting selector data:   0%|          | 0/7473 [00:00<?, ?it/s]
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   2%|▏         | 1/50 [00:00<00:38,  1.28it/s][A
+sampling loop time step:   8%|▊         | 4/50 [00:00<00:08,  5.71it/s][A
+sampling loop time step:  14%|█▍        | 7/50 [00:00<00:04, 10.08it/s][A
+sampling loop time step:  20%|██        | 10/50 [00:01<00:02, 14.14it/s][A
+sampling loop time step:  26%|██▌       | 13/50 [00:01<00:02, 17.68it/s][A
+sampling loop time step:  32%|███▏      | 16/50 [00:01<00:01, 20.64it/s][A
+sampling loop time step:  38%|███▊      | 19/50 [00:01<00:01, 22.99it/s][A
+sampling loop time step:  44%|████▍     | 22/50 [00:01<00:01, 24.76it/s][A
+sampling loop time step:  50%|█████     | 25/50 [00:01<00:00, 26.08it/s][A
+sampling loop time step:  56%|█████▌    | 28/50 [00:01<00:00, 27.04it/s][A
+sampling loop time step:  62%|██████▏   | 31/50 [00:01<00:00, 27.75it/s][A
+sampling loop time step:  68%|██████▊   | 34/50 [00:01<00:00, 28.26it/s][A
+sampling loop time step:  74%|███████▍  | 37/50 [00:01<00:00, 28.72it/s][A
+sampling loop time step:  80%|████████  | 40/50 [00:02<00:00, 29.05it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:02<00:00, 29.27it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:02<00:00, 29.43it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:02<00:00, 29.55it/s][Asampling loop time step: 100%|██████████| 50/50 [00:02<00:00, 20.56it/s]
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.06it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.23it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.35it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.57it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.64it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.66it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.43it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.41it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.38it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.38it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.50it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.16it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.29it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.36it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.39it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.39it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.58it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.61it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.64it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.74it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.61it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.23it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.30it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.57it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.63it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.66it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.68it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.70it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.70it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.59it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.54it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.54it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.59it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.34it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.44it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.46it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.46it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.47it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.43it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.42it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.44it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.45it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.47it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.47it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.46it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.46it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.70it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.74it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.75it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.76it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.77it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.43it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.44it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.52it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.60it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.74it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.68it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.31it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.43it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.49it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.49it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.59it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.66it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.77it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.77it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.63it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.13it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.32it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.36it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.51it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.66it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.68it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.72it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.60it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.55it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.60it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.29it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.39it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.44it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.48it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.54it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.62it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.69it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.72it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.74it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.62it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.29it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.40it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.42it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.43it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.52it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.67it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.70it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.65it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.64it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.34it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.42it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.49it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.36it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.39it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.50it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.60it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.64it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.68it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.60it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.36it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.66it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.69it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.70it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.72it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.74it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.75it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.59it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.54it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.52it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.63it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.09it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.30it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.36it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.50it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.57it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.63it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.66it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.72it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.63it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.66it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.63it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.20it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.31it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.34it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.39it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.39it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.41it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.42it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.43it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.43it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.44it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.46it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.53it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.61it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.69it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.52it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.40it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.63it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.70it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.74it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.77it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.79it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.79it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.77it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.74it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.74it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.30it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.42it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.44it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.44it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.56it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.67it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.67it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.64it/s]
+Collecting selector data:   0%|          | 1/7473 [01:49<226:20:35, 109.05s/it]
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.33it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.44it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.50it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.52it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.52it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.53it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.54it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.51it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.50it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.51it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.24it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.35it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.41it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.49it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.48it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.34it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.43it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.49it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.49it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.49it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.52it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.59it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.64it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.72it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.76it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.62it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.30it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.44it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.50it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.51it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.53it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.73it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.76it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.77it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.71it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.55it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.69it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.76it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.79it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.79it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.80it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.72it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.65it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.61it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.58it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.56it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.57it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.63it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.73it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.69it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.37it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.68it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.73it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.75it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.76it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.76it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.80it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.79it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.79it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.73it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.77it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.75it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.42it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.49it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.49it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.49it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.51it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.52it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.52it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.53it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.54it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.53it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.53it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.53it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.54it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.53it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.53it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.52it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.28it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.38it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.68it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.71it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.76it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.79it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.77it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.78it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.77it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.63it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.58it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.66it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.12it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.33it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.40it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.44it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.48it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.49it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.48it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.46it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.46it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.47it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.48it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.49it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.50it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.60it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.50it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 28.84it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.21it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.38it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.67it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.72it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.77it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.79it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.83it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.68it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.68it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.26it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.37it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.43it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.50it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.50it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.51it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.52it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.51it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.50it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.50it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.49it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.49it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.49it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.49it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.26it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.32it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.38it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.56it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.68it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.70it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.70it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.69it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.69it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.62it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.64it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.63it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.35it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.40it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.43it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.73it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.72it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.77it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.77it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.69it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.68it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.46it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.68it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.70it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.75it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.76it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.75it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.75it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.74it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.68it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.63it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.69it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.72it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.71it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.30it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.55it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.68it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.73it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.78it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.78it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.80it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.82it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.81it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.79it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.78it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.62it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.58it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.54it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.67it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.36it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.40it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.42it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.45it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.48it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.49it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.49it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.49it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.49it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.55it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.62it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.74it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.54it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.56it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.66it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.67it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.72it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.75it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.76it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.78it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.79it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.69it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.64it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.61it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.57it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.56it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.67it/s]
+Collecting selector data:   0%|          | 2/7473 [03:32<219:12:24, 105.63s/it]
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.40it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.56it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.71it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.78it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.83it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.85it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.89it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.90it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.92it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.92it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.91it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.85it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.88it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.85it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.58it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.63it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.61it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.63it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.69it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.86it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.72it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.52it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.58it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.60it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.66it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.73it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.78it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.84it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.86it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.91it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.76it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.37it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.57it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.62it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.74it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.81it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.86it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.89it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.91it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.92it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.93it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.88it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.85it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.84it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.50it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.66it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.64it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.64it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.65it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.67it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.72it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:01<00:00, 29.85it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:01<00:00, 29.88it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.72it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.36it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.74it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.75it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.79it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.81it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.81it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.81it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.81it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.79it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.82it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.79it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.41it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.57it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.63it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.65it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.65it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.64it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.71it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.78it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.85it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.91it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.76it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.51it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.73it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.79it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.84it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.88it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.87it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.89it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.89it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.92it/s][A
+sampling loop time step:  68%|██████▊   | 34/50 [00:01<00:00, 29.96it/s][A
+sampling loop time step:  74%|███████▍  | 37/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  80%|████████  | 40/50 [00:01<00:00, 29.89it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:01<00:00, 29.91it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:01<00:00, 29.92it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.88it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.52it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.62it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.74it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.83it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.88it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.91it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.93it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.94it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.95it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.95it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.89it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.92it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.89it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.51it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.67it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.67it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.65it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.75it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.64it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.62it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.72it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.79it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.70it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.54it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.63it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.68it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.69it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.67it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.68it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:01<00:00, 29.88it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:01<00:00, 29.91it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:01<00:00, 29.92it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.77it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.80it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.87it/s][A
+sampling loop time step:  26%|██▌       | 13/50 [00:00<00:01, 29.92it/s][A
+sampling loop time step:  32%|███▏      | 16/50 [00:00<00:01, 29.91it/s][A
+sampling loop time step:  38%|███▊      | 19/50 [00:00<00:01, 29.94it/s][A
+sampling loop time step:  44%|████▍     | 22/50 [00:00<00:00, 29.93it/s][A
+sampling loop time step:  50%|█████     | 25/50 [00:00<00:00, 29.93it/s][A
+sampling loop time step:  56%|█████▌    | 28/50 [00:00<00:00, 29.92it/s][A
+sampling loop time step:  62%|██████▏   | 31/50 [00:01<00:00, 29.91it/s][A
+sampling loop time step:  68%|██████▊   | 34/50 [00:01<00:00, 29.85it/s][A
+sampling loop time step:  74%|███████▍  | 37/50 [00:01<00:00, 29.77it/s][A
+sampling loop time step:  80%|████████  | 40/50 [00:01<00:00, 29.72it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:01<00:00, 29.69it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:01<00:00, 29.66it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:01<00:00, 29.64it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.80it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.38it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.54it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.63it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.62it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.69it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.77it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.83it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.89it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.89it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.91it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.79it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.73it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.83it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.88it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.89it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.92it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.93it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.93it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.93it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.91it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.89it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.84it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  80%|████████  | 40/50 [00:01<00:00, 29.88it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:01<00:00, 29.91it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.89it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.62it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.60it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.67it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.68it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.72it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.81it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.86it/s][A
+sampling loop time step:  50%|█████     | 25/50 [00:00<00:00, 29.92it/s][A
+sampling loop time step:  56%|█████▌    | 28/50 [00:00<00:00, 29.93it/s][A
+sampling loop time step:  62%|██████▏   | 31/50 [00:01<00:00, 29.93it/s][A
+sampling loop time step:  68%|██████▊   | 34/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  74%|███████▍  | 37/50 [00:01<00:00, 29.95it/s][A
+sampling loop time step:  80%|████████  | 40/50 [00:01<00:00, 29.94it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:01<00:00, 29.92it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:01<00:00, 29.84it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.85it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.73it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.78it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.74it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.69it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.65it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.66it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.66it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.67it/s][A
+sampling loop time step:  62%|██████▏   | 31/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  68%|██████▊   | 34/50 [00:01<00:00, 29.83it/s][A
+sampling loop time step:  74%|███████▍  | 37/50 [00:01<00:00, 29.85it/s][A
+sampling loop time step:  80%|████████  | 40/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  86%|████████▌ | 43/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  92%|█████████▏| 46/50 [00:01<00:00, 29.92it/s][A
+sampling loop time step:  98%|█████████▊| 49/50 [00:01<00:00, 29.93it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.81it/s]
+Collecting selector data:   0%|          | 3/7473 [05:15<216:43:46, 104.45s/it]
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.34it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.48it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.54it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.57it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.58it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.58it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.59it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.58it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.64it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.70it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.76it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.84it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.85it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.84it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.80it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.71it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.47it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.39it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.64it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.75it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.81it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.84it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.85it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.88it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.89it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.88it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.82it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.83it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.83it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.85it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.82it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.40it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.52it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.70it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.78it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.81it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.83it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.85it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.87it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.89it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.89it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.88it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.79it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.78it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.83it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.82it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.37it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.51it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.71it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.78it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.81it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.84it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.85it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.88it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.89it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.88it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.87it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.79it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.74it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.70it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.77it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.42it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.54it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.56it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.68it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.77it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.82it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.85it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.90it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.91it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.88it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.90it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.85it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.82it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.82it/s]
+
+sampling loop time step:   0%|          | 0/50 [00:00<?, ?it/s][A
+sampling loop time step:   6%|▌         | 3/50 [00:00<00:01, 29.42it/s][A
+sampling loop time step:  12%|█▏        | 6/50 [00:00<00:01, 29.52it/s][A
+sampling loop time step:  18%|█▊        | 9/50 [00:00<00:01, 29.56it/s][A
+sampling loop time step:  24%|██▍       | 12/50 [00:00<00:01, 29.59it/s][A
+sampling loop time step:  30%|███       | 15/50 [00:00<00:01, 29.62it/s][A
+sampling loop time step:  36%|███▌      | 18/50 [00:00<00:01, 29.61it/s][A
+sampling loop time step:  42%|████▏     | 21/50 [00:00<00:00, 29.63it/s][A
+sampling loop time step:  48%|████▊     | 24/50 [00:00<00:00, 29.70it/s][A
+sampling loop time step:  54%|█████▍    | 27/50 [00:00<00:00, 29.76it/s][A
+sampling loop time step:  60%|██████    | 30/50 [00:01<00:00, 29.80it/s][A
+sampling loop time step:  66%|██████▌   | 33/50 [00:01<00:00, 29.81it/s][A
+sampling loop time step:  72%|███████▏  | 36/50 [00:01<00:00, 29.83it/s][A
+sampling loop time step:  78%|███████▊  | 39/50 [00:01<00:00, 29.84it/s][A
+sampling loop time step:  84%|████████▍ | 42/50 [00:01<00:00, 29.86it/s][A
+sampling loop time step:  90%|█████████ | 45/50 [00:01<00:00, 29.86it/s][A
+sampling loop time step:  96%|█████████▌| 48/50 [00:01<00:00, 29.86it/s][Asampling loop time step: 100%|██████████| 50/50 [00:01<00:00, 29.76it/s]
+Collecting selector data:   0%|          | 3/7473 [05:53<244:48:52, 117.98s/it]
+Traceback (most recent call last):
+  File "/cvmfs/hpcsw.umd.edu/spack-software/2023.11.20/views/2023/linux-rhel8-zen2/gcc@11.3.0/python-3.10.10/._mpi-nocuda/qd63fn2w5jnqtlfannzt4ilfsbb2xx7q/linux-rhel8-zen2/gcc/11.3.0/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/cvmfs/hpcsw.umd.edu/spack-software/2023.11.20/views/2023/linux-rhel8-zen2/gcc@11.3.0/python-3.10.10/._mpi-nocuda/qd63fn2w5jnqtlfannzt4ilfsbb2xx7q/linux-rhel8-zen2/gcc/11.3.0/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/scratch/zt1/project/kaiqing-prj/user/mbezick/starLDM/scripts/collect_selector_data.py", line 146, in <module>
+    main()
+  File "/scratch/zt1/project/kaiqing-prj/user/mbezick/starLDM/scripts/collect_selector_data.py", line 99, in main
+    correct = verifier.verify(prompt, decoded, gold)
+  File "/scratch/zt1/project/kaiqing-prj/user/mbezick/starLDM/star_ldm/verification/gsm8k.py", line 58, in verify
+    decoded_answer = self.extract_answer(decoded)
+  File "/scratch/zt1/project/kaiqing-prj/user/mbezick/starLDM/star_ldm/verification/gsm8k.py", line 54, in extract_answer
+    return extract_gsm8k_answer(text)
+  File "/scratch/zt1/project/kaiqing-prj/user/mbezick/starLDM/star_ldm/verification/gsm8k.py", line 49, in extract_gsm8k_answer
+    return _format_decimal(value)
+  File "/scratch/zt1/project/kaiqing-prj/user/mbezick/starLDM/star_ldm/verification/gsm8k.py", line 24, in _format_decimal
+    return str(normalized.quantize(Decimal(1)))
+decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]
+srun: error: gpu-b11-4: task 0: Exited with exit code 1
