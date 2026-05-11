@@ -41,17 +41,25 @@ a login node before submitting SLURM jobs:
 ```bash
 module load python/3.10.10/gcc/11.3.0/cuda/12.3.0/linux-rhel8-zen2
 
-python -m venv /home/mbezick/scratch/starLDM/.venv
-source /home/mbezick/scratch/starLDM/.venv/bin/activate
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+mkdir -p "$STARLDM_SCRATCH"/{checkpoints,data,datasets}
+
+python -m venv "$STARLDM_SCRATCH/.venv"
+source "$STARLDM_SCRATCH/.venv/bin/activate"
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt 'accelerate>=1.0' wandb 'datasets>=2.14'
 
 python scripts/download_assets.py \
-    --hf_home /home/mbezick/scratch/starLDM/.hf_cache \
-    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
+    --hf_home "$STARLDM_SCRATCH/.hf_cache" \
+    --gsm8k_path "$STARLDM_SCRATCH/datasets/gsm8k" \
     --lm_name gpt2-large \
     --sentence_encoder sentence-transformers/sentence-t5-xl
 ```
+
+The examples below assume `STARLDM_SCRATCH=/home/mbezick/scratch/starLDM` is
+set in the shell where you submit jobs. The repo already contains
+`checkpoints/star-ldm`; use `MODEL_PATH=checkpoints/star-ldm` unless you copy the
+checkpoint somewhere else.
 
 The submit wrappers default to `GPU_TYPE=a100` and request
 `--gres=gpu:a100:1`. Add `ACCOUNT=...` or `QOS=...` if your allocation requires
@@ -114,10 +122,15 @@ toward plans predicted to decode correctly, optionally sampling multiple
 branches per prompt and applying branch repulsion before selecting the
 highest-scoring plan.
 
-Collect selector data from prompts stored as JSONL rows with `prompt`,
-`prompt_id`, and `gold` fields:
+For custom tasks, collect selector data from prompts stored as JSONL rows with
+`prompt`, `prompt_id`, and `gold` fields:
 
 ```bash
+mkdir -p data
+cat > data/selector_prompts.jsonl <<'JSONL'
+{"prompt_id": 0, "prompt": "The movie was", "gold": "great"}
+JSONL
+
 python -m scripts.collect_selector_data \
     --model_path checkpoints/star-ldm \
     --prompts_path data/selector_prompts.jsonl \
@@ -126,19 +139,8 @@ python -m scripts.collect_selector_data \
     --save_noisy_timesteps
 ```
 
-Submit selector data collection on Zaratan:
-
-```bash
-VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
-HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
-PARTITION=gpu \
-MODEL_PATH=/home/mbezick/scratch/starLDM/checkpoints/star-ldm \
-PROMPTS_PATH=/home/mbezick/scratch/starLDM/data/selector_prompts.jsonl \
-OUTPUT_PATH=/home/mbezick/scratch/starLDM/data/selector_dataset.pt \
-SAVE_NOISY_TIMESTEPS=1 \
-TIME_LIMIT=24:00:00 \
-    zaratan/submit_collect_selector_data.sh
-```
+The repo does not ship a generic `data/selector_prompts.jsonl`. The Zaratan
+selector examples below use GSM8K prompts instead.
 
 Train the selector:
 
@@ -147,18 +149,6 @@ python -m scripts.train_selector \
     --config configs/selector_train.yaml \
     --data_path data/selector_dataset.pt \
     --output_dir checkpoints/selector
-```
-
-Submit selector training on Zaratan:
-
-```bash
-VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
-HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
-PARTITION=gpu \
-DATA_PATH=/home/mbezick/scratch/starLDM/data/selector_dataset.pt \
-OUTPUT_DIR=/home/mbezick/scratch/starLDM/checkpoints/selector \
-TIME_LIMIT=12:00:00 \
-    zaratan/submit_train_selector.sh
 ```
 
 Run single-branch selector guidance:
@@ -190,34 +180,45 @@ python -m scripts.generate \
 Prepare GSM8K for offline use on a login node:
 
 ```bash
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+
 python scripts/download_assets.py \
-    --hf_home /home/mbezick/scratch/starLDM/.hf_cache \
-    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
+    --hf_home "$STARLDM_SCRATCH/.hf_cache" \
+    --gsm8k_path "$STARLDM_SCRATCH/datasets/gsm8k" \
     --lm_name gpt2-large \
     --sentence_encoder sentence-transformers/sentence-t5-xl
 ```
 
-Before submitting selector jobs to Zaratan, build the GSM8K prompt JSONL on a
-login node. The selector collection job reads this JSONL file; it does not read
-the GSM8K dataset directly.
+Before submitting selector jobs to Zaratan, make sure the GSM8K prompt JSONL
+exists. The selector collection job reads this JSONL file; it does not read the
+GSM8K dataset directly. If
+`$STARLDM_SCRATCH/data/gsm8k_train_prompts.jsonl` already exists, skip this
+step. If your existing JSONL is somewhere else, set `GSM8K_PROMPTS_PATH` to that
+path in the submit command.
 
 ```bash
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+
 python -m scripts.prepare_gsm8k_prompts \
-    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
+    --gsm8k_path "$STARLDM_SCRATCH/datasets/gsm8k" \
     --split train \
-    --output_path /home/mbezick/scratch/starLDM/data/gsm8k_train_prompts.jsonl
+    --output_path "$STARLDM_SCRATCH/data/gsm8k_train_prompts.jsonl"
 ```
 
 Submit selector data collection to Zaratan. Use the GSM8K verifier and a longer
 generation budget than the default selector example:
 
 ```bash
-VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
-HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+export GSM8K_PROMPTS_PATH="$STARLDM_SCRATCH/data/gsm8k_train_prompts.jsonl"
+test -f "$GSM8K_PROMPTS_PATH"
+
+VENV_PATH="$STARLDM_SCRATCH/.venv" \
+HF_HOME="$STARLDM_SCRATCH/.hf_cache" \
 PARTITION=gpu \
-MODEL_PATH=/home/mbezick/scratch/starLDM/checkpoints/star-ldm \
-PROMPTS_PATH=/home/mbezick/scratch/starLDM/data/gsm8k_train_prompts.jsonl \
-OUTPUT_PATH=/home/mbezick/scratch/starLDM/data/gsm8k_selector_train.pt \
+MODEL_PATH=checkpoints/star-ldm \
+PROMPTS_PATH="$GSM8K_PROMPTS_PATH" \
+OUTPUT_PATH="$STARLDM_SCRATCH/data/gsm8k_selector_train.pt" \
 VERIFIER=gsm8k \
 SAVE_NOISY_TIMESTEPS=1 \
 MAX_NEW_TOKENS=256 \
@@ -228,12 +229,14 @@ TIME_LIMIT=24:00:00 \
 After the collection job finishes successfully, train the selector:
 
 ```bash
-VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
-HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+
+VENV_PATH="$STARLDM_SCRATCH/.venv" \
+HF_HOME="$STARLDM_SCRATCH/.hf_cache" \
 PARTITION=gpu \
 CONFIG_PATH=configs/selector_train_gsm8k.yaml \
-DATA_PATH=/home/mbezick/scratch/starLDM/data/gsm8k_selector_train.pt \
-OUTPUT_DIR=/home/mbezick/scratch/starLDM/checkpoints/selector-gsm8k \
+DATA_PATH="$STARLDM_SCRATCH/data/gsm8k_selector_train.pt" \
+OUTPUT_DIR="$STARLDM_SCRATCH/checkpoints/selector-gsm8k" \
 TIME_LIMIT=12:00:00 \
     zaratan/submit_train_selector.sh
 ```
@@ -241,26 +244,34 @@ TIME_LIMIT=12:00:00 \
 The same steps can also be run directly without SLURM:
 
 ```bash
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+export GSM8K_PROMPTS_PATH="$STARLDM_SCRATCH/data/gsm8k_train_prompts.jsonl"
+test -f "$GSM8K_PROMPTS_PATH"
+
 python -m scripts.collect_selector_data \
     --model_path checkpoints/star-ldm \
-    --prompts_path data/gsm8k_train_prompts.jsonl \
-    --output_path data/gsm8k_selector_train.pt \
+    --prompts_path "$GSM8K_PROMPTS_PATH" \
+    --output_path "$STARLDM_SCRATCH/data/gsm8k_selector_train.pt" \
     --verifier gsm8k \
     --num_samples_per_prompt 16 \
     --max_new_tokens 256 \
     --save_noisy_timesteps
 
 python -m scripts.train_selector \
-    --config configs/selector_train_gsm8k.yaml
+    --config configs/selector_train_gsm8k.yaml \
+    --data_path "$STARLDM_SCRATCH/data/gsm8k_selector_train.pt" \
+    --output_dir "$STARLDM_SCRATCH/checkpoints/selector-gsm8k"
 ```
 
 Evaluate baseline STAR-LDM against selector-guided STAR-LDM on GSM8K test:
 
 ```bash
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+
 python -m scripts.evaluate_gsm8k \
-    --model_path /home/mbezick/scratch/starLDM/checkpoints/star-ldm \
-    --selector_path /home/mbezick/scratch/starLDM/checkpoints/selector-gsm8k \
-    --gsm8k_path /home/mbezick/scratch/starLDM/datasets/gsm8k \
+    --model_path checkpoints/star-ldm \
+    --selector_path "$STARLDM_SCRATCH/checkpoints/selector-gsm8k" \
+    --gsm8k_path "$STARLDM_SCRATCH/datasets/gsm8k" \
     --split test \
     --output_path eval/gsm8k_results.jsonl
 ```
@@ -319,10 +330,12 @@ PYTHONPATH=. accelerate launch scripts/train.py --config configs/train_fineweb.y
 Download the training and validation datasets on a login node:
 
 ```bash
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+
 python scripts/download_assets.py \
-    --hf_home /home/mbezick/scratch/starLDM/.hf_cache \
-    --fineweb_path /home/mbezick/scratch/starLDM/datasets/fineweb-10BT \
-    --c4_path /home/mbezick/scratch/starLDM/datasets/c4-validation \
+    --hf_home "$STARLDM_SCRATCH/.hf_cache" \
+    --fineweb_path "$STARLDM_SCRATCH/datasets/fineweb-10BT" \
+    --c4_path "$STARLDM_SCRATCH/datasets/c4-validation" \
     --fineweb_subset sample-10BT \
     --lm_name gpt2-large \
     --sentence_encoder sentence-transformers/sentence-t5-xl
@@ -331,11 +344,13 @@ python scripts/download_assets.py \
 Submit the offline training job:
 
 ```bash
-VENV_PATH=/home/mbezick/scratch/starLDM/.venv \
-HF_HOME=/home/mbezick/scratch/starLDM/.hf_cache \
+export STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+
+VENV_PATH="$STARLDM_SCRATCH/.venv" \
+HF_HOME="$STARLDM_SCRATCH/.hf_cache" \
 PARTITION=gpu \
-FINEWEB_LOCAL_PATH=/home/mbezick/scratch/starLDM/datasets/fineweb-10BT \
-C4_LOCAL_PATH=/home/mbezick/scratch/starLDM/datasets/c4-validation \
+FINEWEB_LOCAL_PATH="$STARLDM_SCRATCH/datasets/fineweb-10BT" \
+C4_LOCAL_PATH="$STARLDM_SCRATCH/datasets/c4-validation" \
 TIME_LIMIT=24:00:00 \
     zaratan/submit_train.sh
 ```

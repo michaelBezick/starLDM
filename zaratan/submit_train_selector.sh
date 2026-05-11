@@ -5,8 +5,13 @@
 # Defaults train with configs/selector_train.yaml. Override the dataset,
 # output directory, config, or extra train_selector.py flags via env vars:
 #
-#   DATA_PATH=data/selector_dataset.pt \
-#   OUTPUT_DIR=checkpoints/selector \
+#   STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+#
+#   VENV_PATH="${STARLDM_SCRATCH}/.venv" \
+#   HF_HOME="${STARLDM_SCRATCH}/.hf_cache" \
+#   PARTITION=gpu \
+#   DATA_PATH="${STARLDM_SCRATCH}/data/selector_dataset.pt" \
+#   OUTPUT_DIR="${STARLDM_SCRATCH}/checkpoints/selector" \
 #   TIME_LIMIT=12:00:00 \
 #     zaratan/submit_train_selector.sh
 #

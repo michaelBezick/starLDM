@@ -4,14 +4,26 @@
 #
 # Required:
 #   MODEL_PATH=checkpoints/star-ldm
-#   PROMPTS_PATH=data/selector_prompts.jsonl
-#   OUTPUT_PATH=data/selector_dataset.pt
+#   PROMPTS_PATH=/path/to/prompts.jsonl
+#   OUTPUT_PATH=/path/to/selector_dataset.pt
 #
-# Example:
+# PROMPTS_PATH must already exist. For GSM8K, create it first with
+# scripts/prepare_gsm8k_prompts.py or point to an existing
+# gsm8k_train_prompts.jsonl.
+#
+# GSM8K example:
+#   STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+#   GSM8K_PROMPTS_PATH="${STARLDM_SCRATCH}/data/gsm8k_train_prompts.jsonl"
+#
+#   VENV_PATH="${STARLDM_SCRATCH}/.venv" \
+#   HF_HOME="${STARLDM_SCRATCH}/.hf_cache" \
+#   PARTITION=gpu \
 #   MODEL_PATH=checkpoints/star-ldm \
-#   PROMPTS_PATH=data/selector_prompts.jsonl \
-#   OUTPUT_PATH=data/selector_dataset.pt \
+#   PROMPTS_PATH="${GSM8K_PROMPTS_PATH}" \
+#   OUTPUT_PATH="${STARLDM_SCRATCH}/data/gsm8k_selector_train.pt" \
+#   VERIFIER=gsm8k \
 #   SAVE_NOISY_TIMESTEPS=1 \
+#   MAX_NEW_TOKENS=256 \
 #   TIME_LIMIT=24:00:00 \
 #     zaratan/submit_collect_selector_data.sh
 #

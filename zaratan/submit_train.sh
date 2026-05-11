@@ -6,9 +6,13 @@
 # on a login node first to populate them.
 #
 # Example:
-#   FINEWEB_LOCAL_PATH=/scratch/user/datasets/fineweb-10BT \
-#   C4_LOCAL_PATH=/scratch/user/datasets/c4-validation \
-#   HF_HOME=/scratch/user/.hf_cache \
+#   STARLDM_SCRATCH=/home/mbezick/scratch/starLDM
+#
+#   VENV_PATH="${STARLDM_SCRATCH}/.venv" \
+#   HF_HOME="${STARLDM_SCRATCH}/.hf_cache" \
+#   PARTITION=gpu \
+#   FINEWEB_LOCAL_PATH="${STARLDM_SCRATCH}/datasets/fineweb-10BT" \
+#   C4_LOCAL_PATH="${STARLDM_SCRATCH}/datasets/c4-validation" \
 #     zaratan/submit_train.sh
 #
 #   CONFIG_PATH=configs/train_fineweb.yaml \

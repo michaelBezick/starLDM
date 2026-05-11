@@ -3,18 +3,23 @@
 
 set -euo pipefail
 
-REPO_ROOT="${REPO_ROOT:?REPO_ROOT not set; submit via submit_collect_selector_data.sh}"
-MODEL_PATH="${MODEL_PATH:?MODEL_PATH not set; submit via submit_collect_selector_data.sh}"
-PROMPTS_PATH="${PROMPTS_PATH:?PROMPTS_PATH not set; submit via submit_collect_selector_data.sh}"
-OUTPUT_PATH="${OUTPUT_PATH:?OUTPUT_PATH not set; submit via submit_collect_selector_data.sh}"
-NUM_SAMPLES_PER_PROMPT="${NUM_SAMPLES_PER_PROMPT:-16}"
-VERIFIER="${VERIFIER:-exact_match}"
-SAVE_NOISY_TIMESTEPS="${SAVE_NOISY_TIMESTEPS:-0}"
-NOISY_PER_CLEAN="${NOISY_PER_CLEAN:-4}"
+REPO_ROOT="${REPO_ROOT:?REPO_ROOT not set; submit via submit_evaluate_gsm8k.sh}"
+MODEL_PATH="${MODEL_PATH:?MODEL_PATH not set; submit via submit_evaluate_gsm8k.sh}"
+SELECTOR_PATH="${SELECTOR_PATH:?SELECTOR_PATH not set; submit via submit_evaluate_gsm8k.sh}"
+GSM8K_PATH="${GSM8K_PATH:?GSM8K_PATH not set; submit via submit_evaluate_gsm8k.sh}"
+OUTPUT_PATH="${OUTPUT_PATH:?OUTPUT_PATH not set; submit via submit_evaluate_gsm8k.sh}"
+SPLIT="${SPLIT:-test}"
+LIMIT="${LIMIT:-}"
 SAMPLING_TIMESTEPS="${SAMPLING_TIMESTEPS:-50}"
 SAMPLER="${SAMPLER:-ddpm}"
-COSINE_SCALE="${COSINE_SCALE:-3.0}"
-MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-64}"
+CLS_FREE_GUIDANCE="${CLS_FREE_GUIDANCE:-1.0}"
+SELECTOR_GUIDANCE="${SELECTOR_GUIDANCE:-1.0}"
+NUM_PLAN_BRANCHES="${NUM_PLAN_BRANCHES:-8}"
+REPULSION_SCALE="${REPULSION_SCALE:-0.0}"
+MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-256}"
+DO_SAMPLE="${DO_SAMPLE:-0}"
+TOP_P="${TOP_P:-0.9}"
+REPETITION_PENALTY="${REPETITION_PENALTY:-1.2}"
 SEED="${SEED:-0}"
 EXTRA_ARGS="${EXTRA_ARGS:-}"
 CUDA_DEVICE="${CUDA_DEVICE:-0}"
@@ -27,16 +32,21 @@ cd "${REPO_ROOT}"
 echo "hostname: $(hostname)"
 echo "repo_root: ${REPO_ROOT}"
 echo "model_path: ${MODEL_PATH}"
-echo "prompts_path: ${PROMPTS_PATH}"
+echo "selector_path: ${SELECTOR_PATH}"
+echo "gsm8k_path: ${GSM8K_PATH}"
 echo "output_path: ${OUTPUT_PATH}"
-echo "num_samples_per_prompt: ${NUM_SAMPLES_PER_PROMPT}"
-echo "verifier: ${VERIFIER}"
-echo "save_noisy_timesteps: ${SAVE_NOISY_TIMESTEPS}"
-echo "noisy_per_clean: ${NOISY_PER_CLEAN}"
+echo "split: ${SPLIT}"
+echo "limit: ${LIMIT:-none}"
 echo "sampling_timesteps: ${SAMPLING_TIMESTEPS}"
 echo "sampler: ${SAMPLER}"
-echo "cosine_scale: ${COSINE_SCALE}"
+echo "cls_free_guidance: ${CLS_FREE_GUIDANCE}"
+echo "selector_guidance: ${SELECTOR_GUIDANCE}"
+echo "num_plan_branches: ${NUM_PLAN_BRANCHES}"
+echo "repulsion_scale: ${REPULSION_SCALE}"
 echo "max_new_tokens: ${MAX_NEW_TOKENS}"
+echo "do_sample: ${DO_SAMPLE}"
+echo "top_p: ${TOP_P}"
+echo "repetition_penalty: ${REPETITION_PENALTY}"
 echo "seed: ${SEED}"
 echo "extra_args: ${EXTRA_ARGS:-none}"
 echo "venv_path: ${VENV_PATH}"
@@ -66,23 +76,31 @@ export HF_DATASETS_OFFLINE=1
 export WANDB_MODE=offline
 
 cmd=(
-    python -m scripts.collect_selector_data
+    python -m scripts.evaluate_gsm8k
     --model_path "${MODEL_PATH}"
-    --prompts_path "${PROMPTS_PATH}"
+    --selector_path "${SELECTOR_PATH}"
+    --gsm8k_path "${GSM8K_PATH}"
+    --split "${SPLIT}"
     --output_path "${OUTPUT_PATH}"
-    --num_samples_per_prompt "${NUM_SAMPLES_PER_PROMPT}"
-    --verifier "${VERIFIER}"
-    --noisy_per_clean "${NOISY_PER_CLEAN}"
     --sampling_timesteps "${SAMPLING_TIMESTEPS}"
     --sampler "${SAMPLER}"
-    --cosine_scale "${COSINE_SCALE}"
+    --cls_free_guidance "${CLS_FREE_GUIDANCE}"
+    --selector_guidance "${SELECTOR_GUIDANCE}"
+    --num_plan_branches "${NUM_PLAN_BRANCHES}"
+    --repulsion_scale "${REPULSION_SCALE}"
     --max_new_tokens "${MAX_NEW_TOKENS}"
-    --device cuda
+    --top_p "${TOP_P}"
+    --repetition_penalty "${REPETITION_PENALTY}"
     --seed "${SEED}"
+    --device cuda
 )
 
-if [[ "${SAVE_NOISY_TIMESTEPS}" == "1" || "${SAVE_NOISY_TIMESTEPS}" == "true" || "${SAVE_NOISY_TIMESTEPS}" == "TRUE" ]]; then
-    cmd+=(--save_noisy_timesteps)
+if [[ -n "${LIMIT}" ]]; then
+    cmd+=(--limit "${LIMIT}")
+fi
+
+if [[ "${DO_SAMPLE}" == "1" || "${DO_SAMPLE}" == "true" || "${DO_SAMPLE}" == "TRUE" ]]; then
+    cmd+=(--do_sample)
 fi
 
 if [[ -n "${EXTRA_ARGS}" ]]; then
